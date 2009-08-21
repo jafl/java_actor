@@ -5,7 +5,8 @@ import java.util.LinkedList;
 import java.util.Iterator;
 
 /**
- * Abstract class implementing an Erlang actor.
+ * Abstract class implementing an Erlang actor.  Each actor runs in a
+ * separate thread.
  * 
  * Derived classes must implement <code>process()</code> to process
  * messages and can optionally install a <code>MessageFilter</code> to
@@ -13,14 +14,14 @@ import java.util.Iterator;
  * 
  * @author John Lindal
  */
-abstract class Actor
+abstract class SimpleActor
 	implements Runnable
 {
 	private Thread			itsThread;
 	private List<Object>	itsMessageQueue;
 	private MessageFilter	itsPrefilter;
 
-	protected Actor()
+	protected SimpleActor()
 	{
 		itsMessageQueue = new LinkedList<Object>();
 

@@ -1,6 +1,6 @@
 package com.nps.concurrent;
 
-public class ActorTest
+public class SimpleActorTest
 	extends junit.framework.TestCase
 {
 	public void testRing()

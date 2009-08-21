@@ -1,10 +1,10 @@
 package com.nps.concurrent;
 
 public class RingActor
-	extends Actor
+	extends SimpleActor
 {
-	private long	itsIndex;
-	private Actor	itsNextActor;
+	private long		itsIndex;
+	private SimpleActor	itsNextActor;
 
 	public RingActor(
 		long index)
@@ -13,7 +13,7 @@ public class RingActor
 	}
 
 	public void setNext(
-		Actor a)
+		SimpleActor a)
 	{
 		itsNextActor = a;
 	}

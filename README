@@ -4,8 +4,8 @@ This package provides a simple implementation of an Erlang Actor.
 
 Usage
 
-Each actor runs in a separate thread.  Extend com.nps.concurrent.Actor and
-implement process() to handle messages.  If you want to retrieve futher
+Each actor runs in a separate thread.  Extend com.nps.concurrent.SimpleActor
+and implement process() to handle messages.  If you want to retrieve futher
 messages within process(), call get().  To send a message to an actor,
 invoke recv() on that actor.  Ideally, all actors should have no public
 functions beyond what is required to initialize them before the messages
