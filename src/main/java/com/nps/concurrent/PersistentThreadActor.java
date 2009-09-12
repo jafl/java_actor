@@ -1,139 +1,27 @@
 package com.nps.concurrent;
 
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Iterator;
-
 /**
  * Abstract class implementing an Erlang actor.  Each actor runs in a
- * separate thread.
- * 
- * Derived classes must implement <code>process()</code> to process
- * messages and can optionally install a <code>MessageFilter</code> to
- * pre-filter messages.
+ * separate, persistent thread.
  * 
  * @author John Lindal
  */
-abstract class SimpleActor
-	implements Runnable
+abstract class PersistentThreadActor
+	extends ActorBase
 {
-	private Thread			itsThread;
-	private List<Object>	itsMessageQueue;
-	private MessageFilter	itsPrefilter;
+	private boolean	itsAliveFlag = true;
 
-	protected SimpleActor()
+	protected PersistentThreadActor()
 	{
-		itsMessageQueue = new LinkedList<Object>();
-
-		itsThread = new Thread(this);
-		itsThread.start();
-	}
-
-	protected interface MessageFilter
-	{
-		/**
-		 * This is useful if static rules, e.g., class type, determine what
-		 * messages are accepted.  Dynamic rules, e.g., B only accepted after
-		 * A, must be implemented in process().
-		 * 
-		 * @param msg	the message
-		 * @return		true if the message is acceptable
-		 */
-		public boolean acceptMessage(Object msg);
+		new Thread(this).start();
 	}
 
 	/**
-	 * Returns true if this actor has unprocessed messages.
-	 * 
-	 * @return	true if this actor has unprocessed messages
+	 * Unregister this actor with the system.
 	 */
-	public final boolean hasPendingMessages()
+	protected final void die()
 	{
-		synchronized (itsMessageQueue)
-		{
-			return (itsMessageQueue.size() > 0);
-		}
-	}
-
-	/**
-	 * Receive a message.
-	 * 
-	 * @param msg				the message to receive
-	 * @throws InvalidMessage	if the pre-filter rejects the message
-	 */
-	public final void recv(
-		Object  msg)
-		throws  InvalidMessage
-	{
-		if (itsPrefilter != null && !itsPrefilter.acceptMessage(msg))
-		{
-			throw new InvalidMessage();
-		}
-
-		synchronized (itsMessageQueue)
-		{
-			itsMessageQueue.add(msg);
-			itsMessageQueue.notify();
-		}
-	}
-
-	/**
-	 * Retrieve the next message in the queue.
-	 * 
-	 * @return	the next message
-	 */
-	protected final Object next()
-	{
-		Object msg;
-		synchronized (itsMessageQueue)
-		{
-			msg = itsMessageQueue.remove(0);
-		}
-
-		return msg;
-	}
-
-	/**
-	 * Retrieve the next message of the specified type.
-	 * 
-	 * @return	the next message of the specified type or null if no such message
-	 */
-	protected final Object get(
-		final Class clazz)
-	{
-		return get(new MessageFilter()
-		{
-			public boolean acceptMessage(
-				Object msg)
-			{
-				return clazz.isInstance(msg);
-			}
-		});
-	}
-
-	/**
-	 * Retrieve the first message matching the specified filter.
-	 * 
-	 * @return	the first matching message or null if no such message
-	 */
-	protected final Object get(
-		MessageFilter f)
-	{
-		synchronized (itsMessageQueue)
-		{
-			Iterator iter = itsMessageQueue.iterator();
-			while (iter.hasNext())
-			{
-				Object msg = iter.next();
-				if (f.acceptMessage(msg))
-				{
-					iter.remove();
-					return msg;
-				}
-			}
-		}
-
-		return null;
+		itsAliveFlag = false;
 	}
 
 	/**
@@ -141,27 +29,16 @@ abstract class SimpleActor
 	 */
 	public final void run()
 	{
-		while (true)
+		while (itsAliveFlag)
 		{
-			synchronized (itsMessageQueue)
-			{
-				if (!hasPendingMessages())
-				{
-					try
-					{
-						itsMessageQueue.wait();
-					}
-					catch (InterruptedException ex)
-					{
-					}
-				}
-			}
+			waitForMessage();
 
 			// Since the public API only allows adding messages, this
-			// doesn't need to be synchronized, because the number of
-			// messages can only increase.
+			// doesn't need to be synchronized between hasPendingMessages()
+			// and next(), because the number of messages can only
+			// increase.
 
-			while (hasPendingMessages())
+			while (itsAliveFlag && hasPendingMessages())
 			{
 				if (!process(next()))
 				{
@@ -172,11 +49,33 @@ abstract class SimpleActor
 	}
 
 	/**
-	 * Process a message.  This function is allowed to call get() to
-	 * attempt to retrieve additional messages.
-	 * 
-	 * @param msg	the message
-	 * @return		false to terminate the actor
+	 * Wait for a message to arrive.
 	 */
-	abstract protected boolean process(Object msg);
+	private final void waitForMessage()
+	{
+		synchronized (itsMessageQueue)
+		{
+			if (!hasPendingMessages())
+			{
+				try
+				{
+					itsMessageQueue.wait();
+				}
+				catch (InterruptedException ex)
+				{
+				}
+			}
+		}
+	}
+
+	/**
+	 * Notify the actor that it has received a message.
+	 */
+	protected final void notifyMessageAvailable()
+	{
+		synchronized (itsMessageQueue)
+		{
+			itsMessageQueue.notify();
+		}
+	}
 }

@@ -1,36 +1,29 @@
 package com.nps.concurrent;
 
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Iterator;
-
 /**
  * Abstract class implementing an Erlang actor.  Each actor runs in a
- * separate, persistent thread.
+ * separate, transient thread.
  * 
  * @author John Lindal
  */
-abstract class PersistentThreadActor
+abstract class ThreadPoolActor
 	extends ActorBase
 {
-	private Thread	itsThread;
-	private boolean	itsAliveFlag = true;
+	private ActorThreadPool	itsThreadPool;
 
-	/**
-	 * Register this actor with the system.
-	 */
-	protected final void register()
+	protected ThreadPoolActor(
+		ActorThreadPool	pool)
 	{
-		itsThread = new Thread(this);
-		itsThread.start();
+		itsThreadPool = pool;
+		itsThreadPool.add(this);
 	}
 
 	/**
-	 * Register this actor with the system.
+	 * Unregister this actor with the system.
 	 */
 	protected final void die()
 	{
-		itsAliveFlag = false;
+		itsThreadPool.remove(this);
 	}
 
 	/**
@@ -38,41 +31,16 @@ abstract class PersistentThreadActor
 	 */
 	public final void run()
 	{
-		while (itsAliveFlag)
+		// Since the public API only allows adding messages, this
+		// doesn't need to be synchronized between hasPendingMessages()
+		// and next(), because the number of messages can only
+		// increase.
+
+		while (hasPendingMessages())
 		{
-			waitForMessage();
-
-			// Since the public API only allows adding messages, this
-			// doesn't need to be synchronized between hasPendingMessages()
-			// and next(), because the number of messages can only
-			// increase.
-
-			while (itsAliveFlag && hasPendingMessages())
+			if (!process(next()))
 			{
-				if (!process(next()))
-				{
-					break;
-				}
-			}
-		}
-	}
-
-	/**
-	 * Wait for a message to arrive.
-	 */
-	protected final void waitForMessage()
-	{
-		synchronized (itsMessageQueue)
-		{
-			if (!hasPendingMessages())
-			{
-				try
-				{
-					itsMessageQueue.wait();
-				}
-				catch (InterruptedException ex)
-				{
-				}
+				break;
 			}
 		}
 	}
@@ -82,9 +50,6 @@ abstract class PersistentThreadActor
 	 */
 	protected final void notifyMessageAvailable()
 	{
-		synchronized (itsMessageQueue)
-		{
-			itsMessageQueue.notify();
-		}
+		itsThreadPool.queue(this);
 	}
 }

@@ -1,19 +1,19 @@
 package com.nps.concurrent;
 
-public class RingActor
-	extends SimpleActor
+public class PersistentThreadRingActor
+	extends PersistentThreadActor
 {
-	private long		itsIndex;
-	private SimpleActor	itsNextActor;
+	private long					itsIndex;
+	private PersistentThreadActor	itsNextActor;
 
-	public RingActor(
+	public PersistentThreadRingActor(
 		long index)
 	{
 		itsIndex = index;
 	}
 
 	public void setNext(
-		SimpleActor a)
+		PersistentThreadActor a)
 	{
 		itsNextActor = a;
 	}

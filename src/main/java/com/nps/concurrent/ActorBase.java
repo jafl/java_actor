@@ -7,8 +7,8 @@ import java.util.Iterator;
 /**
  * Abstract base class for implementing an Erlang actor.  Each actor runs
  * in a separate thread, but how actors are mapped to threads is left up to
- * the derived class:  implement <code>register()</code>,
- * <code>notifyMessageAvailable()</code>, and <code>run()</code>.
+ * the derived class:  implement <code>run()</code>, <code>die()</code>,
+ * <code>notifyMessageAvailable()</code>.
  * 
  * Concrete classes must implement <code>process()</code> to process
  * messages and can optionally install a <code>MessageFilter</code> to
@@ -16,17 +16,15 @@ import java.util.Iterator;
  * 
  * @author John Lindal
  */
-abstract class SimpleActor
+abstract class ActorBase
 	implements Runnable
 {
-	private List<Object>	itsMessageQueue;
+	protected List<Object>	itsMessageQueue;	// ought to be private
 	private MessageFilter	itsPrefilter;
 
-	protected SimpleActor()
+	protected ActorBase()
 	{
 		itsMessageQueue = new LinkedList<Object>();
-
-		register();
 	}
 
 	protected interface MessageFilter
@@ -98,10 +96,10 @@ abstract class SimpleActor
 	 * 
 	 * @return	the next message of the specified type or null if no such message
 	 */
-	protected final Object get(
+	protected final Object next(
 		final Class clazz)
 	{
-		return get(new MessageFilter()
+		return next(new MessageFilter()
 		{
 			public boolean acceptMessage(
 				Object msg)
@@ -116,7 +114,7 @@ abstract class SimpleActor
 	 * 
 	 * @return	the first matching message or null if no such message
 	 */
-	protected final Object get(
+	protected final Object next(
 		MessageFilter f)
 	{
 		synchronized (itsMessageQueue)
@@ -137,17 +135,18 @@ abstract class SimpleActor
 	}
 
 	/**
-	 * Register this actor with the system.
+	 * Unregister this actor with the thread management system.
 	 */
-	abstract protected void register();
+	abstract protected void die();
 
 	/**
-	 * Notify the actor that it has received a message.
+	 * Notify the thread management system that this actor has received a
+	 * message.
 	 */
 	abstract protected void notifyMessageAvailable();
 
 	/**
-	 * Process a message.  This function is allowed to call get() to
+	 * Process a message.  This function is allowed to call next() to
 	 * attempt to retrieve additional messages.
 	 * 
 	 * @param msg	the message

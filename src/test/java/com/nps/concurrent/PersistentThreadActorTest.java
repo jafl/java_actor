@@ -1,14 +1,14 @@
 package com.nps.concurrent;
 
-public class SimpleActorTest
+public class PersistentThreadActorTest
 	extends junit.framework.TestCase
 {
 	public void testRing()
 	{
-		RingActor a[] = new RingActor[503];
+		PersistentThreadRingActor a[] = new PersistentThreadRingActor[503];
 		for (int i=0; i<503; i++)
 		{
-			a[i] = new RingActor(i+1);
+			a[i] = new PersistentThreadRingActor(i+1);
 		}
 
 		for (int i=0; i<503; i++)

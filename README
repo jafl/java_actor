@@ -1,28 +1,41 @@
 Introduction
 
-This package provides a simple implementation of an Erlang Actor.
-
-Usage
-
-Each actor runs in a separate thread.  Extend com.nps.concurrent.SimpleActor
-and implement process() to handle messages.  If you want to retrieve futher
-messages within process(), call get().  To send a message to an actor,
-invoke recv() on that actor.  Ideally, all actors should have no public
-functions beyond what is required to initialize them before the messages
-start flying, because this eliminates the need for locks, but it is
-probably not realistic for complex systems.
-
-Future Work
-
-One could potentially use a shared thread pool instead of creating a
-separate thread for every actor.  This would require tuning of the thread
-pool size since some actors may run continuously, e.g., reading from a data
-source, and then periodically sending messages to other actors.  With too
-few threads, endless actors would monopolize all available threads.  Of
-course, for very large systems, everything needs tuning since it pushes the
-limits of available resources!
+This package provides simple implementations of an Erlang Actor.
 
 Installation
 
 This package is built using Maven (http://maven.apache.org/).  Once you have
 installed Maven, simply run "mvn clean install", and it will build the jar.
+
+Usage
+
+Each actor runs in a separate thread and must extend one of these classes:
+
+   * com.nps.concurrent.PersistentThreadActor
+   * com.nps.concurrent.ThreadPoolActor
+
+Each actor must implement process() to handle messages.  To retrieve futher
+messages within process(), call one of the versions of next().  To send a
+message to an actor, invoke recv() on that actor.  Ideally, all actors
+should have no public functions beyond what is required to initialize them
+before the messages start flying, because this eliminates the need for
+locks, but this is probably not realistic in a complex system.
+
+Note that each ThreadPoolActor requires that you provide an ActorThreadPool
+in which the actor will run.  You can have multiple ActorThreadPools, but
+each ThreadPoolActor runs in a single pool.  Actors that are constantly
+busy should extend PersistentThreadActor to avoid monopolizing the threads
+in a pool.  The size of each ActorThreadPool must be tuned to avoid
+congestion.  If there are too few threads, actors may have to wait a long
+time before they get a timeslice.  To ensure that all messages are
+eventually processed, actors must never block waiting for a message.
+Instead, they should sleep after storing internal state describing what to
+do when the expected message eventually arrives.
+
+Discussion
+
+I would have liked to make the behavior (persistent thread vs. thread pool)
+a strategy instead of requiring inheritance, but I could not find a way to
+factor this out without over-exposing the internals of ActorBase.  As it
+is, the message queue in ActorBase is already forced to be protected
+instead of private.
