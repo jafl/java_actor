@@ -35,13 +35,14 @@ eventually processed, actors must never block waiting for a message.
 Instead, they should sleep after storing internal state describing what to
 do when the expected message eventually arrives.
 
-The unit tests suggest that PersistentThreadActorExecution and
-ThreadPoolActorExecution are equally efficient, though the latter can cause
-actors to wait for an available thread.  JITThreadActor is significantly
-slower because thread creation is expensive, but if you're starved for
-memory, i.e., you can't use a persistent thread, and you don't want to wait
-in a thread pool queue, then this might be an option, especially if it
-doesn't receive messages very often.
+The unit tests suggest that PersistentThreadActorExecution is only
+fractionally faster than ThreadPoolActorExecution.  The latter has
+additional latency since it can cause actors to wait for an available
+thread.  JITThreadActor is significantly slower because thread creation is
+expensive, but if you're starved for memory, i.e., you can't use a
+persistent thread, and you don't want to wait in a thread pool queue, then
+this might be an option, especially if it doesn't receive messages very
+often.
 
 Change Log
 

@@ -1,5 +1,7 @@
 package com.nps.concurrent;
 
+import java.util.Date;
+
 import java.util.concurrent.TimeUnit;
 
 public class RingTest
@@ -11,14 +13,26 @@ public class RingTest
 	{
 		System.out.println("PersistentThreadActorExecution");
 
-		ring(new PersistentThreadActorExecution(), 1000000);
+		RingActor a[] = new RingActor[ACTOR_COUNT];
+		for (int i=0; i<ACTOR_COUNT; i++)
+		{
+			a[i] = new RingActor(new PersistentThreadActorExecution(), i+1);
+		}
+
+		ring(a, 1000000);
 	}
 
 	public void testTransientThreadRing()
 	{
 		System.out.println("JITThreadActorExecution");
 
-		ring(new JITThreadActorExecution(), 10000);
+		RingActor a[] = new RingActor[ACTOR_COUNT];
+		for (int i=0; i<ACTOR_COUNT; i++)
+		{
+			a[i] = new RingActor(new JITThreadActorExecution(), i+1);
+		}
+
+		ring(a, 10000);
 	}
 
 	public void testThreadPoolRing()
@@ -26,23 +40,26 @@ public class RingTest
 		System.out.println("ThreadPoolActorExecution");
 
 		ActorThreadPool pool = new ActorThreadPool(25, 100, 1, TimeUnit.SECONDS);
-		ring(new ThreadPoolActorExecution(pool), 1000000);
-	}
 
-	private void ring(
-		ActorExecution	exec,
-		long			timeToLive)
-	{
 		RingActor a[] = new RingActor[ACTOR_COUNT];
 		for (int i=0; i<ACTOR_COUNT; i++)
 		{
-			a[i] = new RingActor(exec, i+1);
+			a[i] = new RingActor(new ThreadPoolActorExecution(pool), i+1);
 		}
 
+		ring(a, 1000000);
+	}
+
+	private void ring(
+		RingActor[]	a,
+		long		timeToLive)
+	{
 		for (int i=0; i<ACTOR_COUNT; i++)
 		{
 			a[i].setNext(a[ (i+1) % ACTOR_COUNT ]);
 		}
+
+		Date t1 = new Date();
 
 		RingMessage msg = new RingMessage(timeToLive);
 		a[0].recv(msg);
@@ -65,5 +82,8 @@ public class RingTest
 				}
 			}
 		}
+
+		Date t2 = new Date();
+		System.out.println("Time elapsed: " + (t2.getTime() - t1.getTime())/1000.0 + " sec");
 	}
 }
