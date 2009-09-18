@@ -23,33 +23,33 @@ T
 F
 "./src/main/java/com/nps/concurrent/Actor.java"
 T
-2 "ActorExecution.java"
+2 "Agent.java"
 F
-"./src/main/java/com/nps/concurrent/ActorExecution.java"
+"./src/main/java/com/nps/concurrent/Agent.java"
 T
 2 "MessageFilter.java"
 F
 "./src/main/java/com/nps/concurrent/MessageFilter.java"
 T
-2 "PersistentThreadActorExecution.java"
+2 "PersistentThreadAgent.java"
 F
-"./src/main/java/com/nps/concurrent/PersistentThreadActorExecution.java"
+"./src/main/java/com/nps/concurrent/PersistentThreadAgent.java"
 T
-2 "TransientThreadActorExecution.java"
+2 "TransientThreadAgent.java"
 F
-"./src/main/java/com/nps/concurrent/TransientThreadActorExecution.java"
+"./src/main/java/com/nps/concurrent/TransientThreadAgent.java"
 T
-2 "ThreadPoolActorExecution.java"
+2 "ThreadPoolAgent.java"
 F
-"./src/main/java/com/nps/concurrent/ThreadPoolActorExecution.java"
+"./src/main/java/com/nps/concurrent/ThreadPoolAgent.java"
 T
 2 "ActorThreadPool.java"
 F
 "./src/main/java/com/nps/concurrent/ActorThreadPool.java"
 T
-2 "JITThreadActorExecution.java"
+2 "JITThreadAgent.java"
 F
-"./src/main/java/com/nps/concurrent/JITThreadActorExecution.java"
+"./src/main/java/com/nps/concurrent/JITThreadAgent.java"
 T
 2 "InvalidMessage.java"
 F

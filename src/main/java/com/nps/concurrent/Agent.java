@@ -16,7 +16,7 @@ import java.util.Iterator;
  * 
  * @author John Lindal
  */
-/* package */ abstract class ActorExecution
+/* package */ abstract class Agent
 	implements Runnable
 {
 	protected List<Object>	itsMessageQueue = new LinkedList<Object>();		// ought to be private
@@ -139,9 +139,10 @@ import java.util.Iterator;
 	}
 
 	/**
-	 * Duplicate this execution context for use by another actor.
+	 * Duplicate this execution context for use by another actor.  This
+	 * does not copy the message filter.
 	 */
-	abstract /* package */ ActorExecution dup();
+	abstract /* package */ Agent dup();
 
 	/**
 	 * Unregister this actor with the thread management system.

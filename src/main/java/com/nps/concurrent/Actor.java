@@ -17,21 +17,21 @@ import java.util.Iterator;
  */
 public abstract class Actor
 {
-	private ActorExecution	itsExecution;
+	private Agent	itsAgent;
 
 	protected Actor(
-		ActorExecution exec)
+		Agent agent)
 	{
-		if (exec.hasActor())
+		if (agent.hasActor())
 		{
-			itsExecution = exec.dup();			
+			itsAgent = agent.dup();			
 		}
 		else
 		{
-			itsExecution = exec;
+			itsAgent = agent;
 		}
 
-		itsExecution.setActor(this);
+		itsAgent.setActor(this);
 	}
 
 	/**
@@ -41,7 +41,7 @@ public abstract class Actor
 	 */
 	public final boolean hasPendingMessages()
 	{
-		return itsExecution.hasPendingMessages();
+		return itsAgent.hasPendingMessages();
 	}
 
 	/**
@@ -54,7 +54,7 @@ public abstract class Actor
 		Object  msg)
 		throws  InvalidMessage
 	{
-		itsExecution.recv(msg);
+		itsAgent.recv(msg);
 	}
 
 	/**
@@ -64,7 +64,7 @@ public abstract class Actor
 	 */
 	protected final Object next()
 	{
-		return itsExecution.next();
+		return itsAgent.next();
 	}
 
 	/**
@@ -75,7 +75,7 @@ public abstract class Actor
 	protected final Object next(
 		Class clazz)
 	{
-		return itsExecution.next(clazz);
+		return itsAgent.next(clazz);
 	}
 
 	/**
@@ -86,7 +86,7 @@ public abstract class Actor
 	protected final Object next(
 		MessageFilter f)
 	{
-		return itsExecution.next(f);
+		return itsAgent.next(f);
 	}
 
 	/**
@@ -94,7 +94,7 @@ public abstract class Actor
 	 */
 	protected void die()
 	{
-		itsExecution.die();
+		itsAgent.die();
 	}
 
 	/**

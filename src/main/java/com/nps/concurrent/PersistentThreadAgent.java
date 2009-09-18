@@ -6,12 +6,12 @@ package com.nps.concurrent;
  * 
  * @author John Lindal
  */
-public class PersistentThreadActorExecution
-	extends ActorExecution
+public class PersistentThreadAgent
+	extends Agent
 {
 	private boolean	itsAliveFlag = true;
 
-	public PersistentThreadActorExecution()
+	public PersistentThreadAgent()
 	{
 		new Thread(this).start();
 	}
@@ -19,9 +19,9 @@ public class PersistentThreadActorExecution
 	/**
 	 * Duplicate this execution context for use by another actor.
 	 */
-	/* package */ ActorExecution dup()
+	/* package */ Agent dup()
 	{
-		return new PersistentThreadActorExecution();
+		return new PersistentThreadAgent();
 	}
 
 	/**

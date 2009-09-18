@@ -6,8 +6,8 @@ package com.nps.concurrent;
  * 
  * @author John Lindal
  */
-/* package */ abstract class TransientThreadActorExecution
-	extends ActorExecution
+/* package */ abstract class TransientThreadAgent
+	extends Agent
 {
 	private boolean	itsAliveFlag   = true;
 	private Boolean	itsRunningFlag = Boolean.FALSE;

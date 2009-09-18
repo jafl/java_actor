@@ -11,34 +11,39 @@ public class RingTest
 
 	public void testPersistentThreadRing()
 	{
-		System.out.println("PersistentThreadActorExecution");
+		System.out.println("PersistentThreadAgent");
 
-		ring(new PersistentThreadActorExecution(), 1000000);
+		ring(new PersistentThreadAgent(), 1000000);
 	}
 
 	public void testTransientThreadRing()
 	{
-		System.out.println("JITThreadActorExecution");
+		System.out.println("JITThreadAgent");
 
-		ring(new JITThreadActorExecution(), 10000);
+		ring(new JITThreadAgent(), 10000);
 	}
 
 	public void testThreadPoolRing()
 	{
-		System.out.println("ThreadPoolActorExecution");
+		System.out.println("ThreadPoolAgent (100)");
 
 		ActorThreadPool pool = new ActorThreadPool(25, 100, 1, TimeUnit.SECONDS);
-		ring(new ThreadPoolActorExecution(pool), 1000000);
+		ring(new ThreadPoolAgent(pool), 1000000);
+
+		System.out.println("ThreadPoolAgent (10)");
+
+		pool = new ActorThreadPool(1, 10, 1, TimeUnit.SECONDS);
+		ring(new ThreadPoolAgent(pool), 1000000);
 	}
 
 	private void ring(
-		ActorExecution	exec,
-		long			timeToLive)
+		Agent	agent,
+		long	timeToLive)
 	{
 		RingActor a[] = new RingActor[ACTOR_COUNT];
 		for (int i=0; i<ACTOR_COUNT; i++)
 		{
-			a[i] = new RingActor(exec, i+1);
+			a[i] = new RingActor(agent, i+1);
 		}
 
 		for (int i=0; i<ACTOR_COUNT; i++)

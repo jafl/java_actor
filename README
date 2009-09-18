@@ -18,47 +18,46 @@ actors should have no public functions beyond what is required to
 initialize them before the messages start flying, because this eliminates
 the need for locks, but this is probably not realistic in a complex system.
 
-Each actor must be configured with an execution model:
+Each actor must be configured with an agent:
 
-   * com.nps.concurrent.PersistentThreadActorExecution
-   * com.nps.concurrent.ThreadPoolActorExecution
-   * com.nps.concurrent.JITThreadActorExecution
+   * com.nps.concurrent.PersistentThreadAgent
+   * com.nps.concurrent.ThreadPoolAgent
+   * com.nps.concurrent.JITThreadAgent
 
-Ideally, you should instantiate a separate execution instance for each
-actor.  However, for convenience, you can pass the same execution instance
-to multiple actors, and it will be duplicated for you.
+Ideally, you should instantiate a separate agent instance for each actor.
+However, for convenience, you can pass the same agent instance to multiple
+actors, and it will be duplicated for you.  Note that each actor is
+expected to install its own MessageFilter, so this is not copied.
 
-Each ThreadPoolActorExecution requires that you provide an ActorThreadPool
-in which the actor will run.  You can have multiple ActorThreadPools, but
-each Actor runs in a single, specific pool.  Actors that are constantly
-busy should use PersistentThreadActorExecution to avoid monopolizing the
-threads in a pool.  The size of each ActorThreadPool should be tuned to
-avoid congestion.  If there are too few threads, actors may have to wait a
-long time before they get a time slice.  To ensure that all messages are
-eventually processed, actors must never block waiting for a message.
-Instead, they should sleep after storing internal state describing what to
-do when the expected message eventually arrives.
+Each ThreadPoolAgent requires that you provide an ActorThreadPool in which
+the actor will run.  You can have multiple ActorThreadPools, but each Actor
+runs in a single, specific pool.  Actors that are constantly busy should
+use PersistentThreadAgent to avoid monopolizing the threads in a pool.  The
+size of each ActorThreadPool should be tuned to avoid congestion.  If there
+are too few threads, actors may have to wait a long time before they get a
+time slice.  To ensure that all messages are eventually processed, actors
+must never block waiting for a message.  Instead, they should sleep after
+storing internal state describing what to do when the expected message
+eventually arrives.
 
-The unit tests suggest that PersistentThreadActorExecution is only
-fractionally faster than ThreadPoolActorExecution.  The latter has
-additional latency since it can cause actors to wait for an available
-thread.  JITThreadActor is significantly slower because thread creation is
-expensive, but if you're starved for memory, i.e., you can't use a
-persistent thread, and you don't want to wait in a thread pool queue, then
-this might be an option, especially if it doesn't receive messages very
-often.
+The unit tests suggest that ThreadPoolAgent can be faster than
+PersistentThreadAgent.  The former may have additional latency since it can
+cause actors to wait for an available thread, but having fewer threads
+executing simultaneously can be faster.  JITThreadActor is significantly
+slower because thread creation is expensive, but if you're starved for
+memory, i.e., you can't use a persistent thread, and you don't want to wait
+in a thread pool queue, then this might be an option, especially if it
+doesn't receive messages very often.
 
 Change Log
 
 1.1  John Lindal  2009-09-17
 
-   * Refactored SimpleActor into Actor and PersistentThreadActorExecution.
-     Instead of using inheritance, an actor must be passed an execution model.
+   * Refactored SimpleActor into Actor and PersistentThreadAgent.
+     Instead of using inheritance, an actor must be passed an agent.
    * Actor.process() no longer returns boolean.  Call die() instead.
-   * Created ThreadPoolActorExecution for actors that do not require
-     dedicated threads.
-   * Created JITPoolActorExecution for actors that should create a thread
-     on demand.
+   * Created ThreadPoolAgent for actors that do not require dedicated threads.
+   * Created JITPoolAgent for actors that should create a thread on demand.
    * Fixed appropriate classes to be public.
    * Moved MessageFilter class out of ActorBase.
-   * Added get/setMessageFilter() to ActorExecution.
+   * Added get/setMessageFilter() to Agent.

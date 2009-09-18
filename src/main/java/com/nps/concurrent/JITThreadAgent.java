@@ -2,27 +2,19 @@ package com.nps.concurrent;
 
 /**
  * Abstract class implementing an Erlang actor.  When a message arrives,
- * the actor queues itself up for access to a thread pool.
+ * the actor starts a thread to process the message.
  * 
  * @author John Lindal
  */
-public class ThreadPoolActorExecution
-	extends TransientThreadActorExecution
+public class JITThreadAgent
+	extends TransientThreadAgent
 {
-	private ActorThreadPool	itsThreadPool;
-
-	public ThreadPoolActorExecution(
-		ActorThreadPool	pool)
-	{
-		itsThreadPool = pool;
-	}
-
 	/**
 	 * Duplicate this execution context for use by another actor.
 	 */
-	/* package */ ActorExecution dup()
+	/* package */ Agent dup()
 	{
-		return new ThreadPoolActorExecution(itsThreadPool);
+		return new JITThreadAgent();
 	}
 
 	/**
@@ -41,7 +33,7 @@ public class ThreadPoolActorExecution
 	{
 		if (isAlive())
 		{
-			itsThreadPool.execute(this);
+			new Thread(this).start();
 		}
 	}
 }

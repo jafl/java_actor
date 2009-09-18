@@ -7,10 +7,10 @@ class RingActor
 	private Actor	itsNextActor;
 
 	public RingActor(
-		ActorExecution	exec,
-		long			index)
+		Agent	agent,
+		long	index)
 	{
-		super(exec);
+		super(agent);
 		itsIndex = index;
 	}
 
