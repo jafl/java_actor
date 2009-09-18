@@ -13,26 +13,14 @@ public class RingTest
 	{
 		System.out.println("PersistentThreadActorExecution");
 
-		RingActor a[] = new RingActor[ACTOR_COUNT];
-		for (int i=0; i<ACTOR_COUNT; i++)
-		{
-			a[i] = new RingActor(new PersistentThreadActorExecution(), i+1);
-		}
-
-		ring(a, 1000000);
+		ring(new PersistentThreadActorExecution(), 1000000);
 	}
 
 	public void testTransientThreadRing()
 	{
 		System.out.println("JITThreadActorExecution");
 
-		RingActor a[] = new RingActor[ACTOR_COUNT];
-		for (int i=0; i<ACTOR_COUNT; i++)
-		{
-			a[i] = new RingActor(new JITThreadActorExecution(), i+1);
-		}
-
-		ring(a, 10000);
+		ring(new JITThreadActorExecution(), 10000);
 	}
 
 	public void testThreadPoolRing()
@@ -40,20 +28,19 @@ public class RingTest
 		System.out.println("ThreadPoolActorExecution");
 
 		ActorThreadPool pool = new ActorThreadPool(25, 100, 1, TimeUnit.SECONDS);
-
-		RingActor a[] = new RingActor[ACTOR_COUNT];
-		for (int i=0; i<ACTOR_COUNT; i++)
-		{
-			a[i] = new RingActor(new ThreadPoolActorExecution(pool), i+1);
-		}
-
-		ring(a, 1000000);
+		ring(new ThreadPoolActorExecution(pool), 1000000);
 	}
 
 	private void ring(
-		RingActor[]	a,
-		long		timeToLive)
+		ActorExecution	exec,
+		long			timeToLive)
 	{
+		RingActor a[] = new RingActor[ACTOR_COUNT];
+		for (int i=0; i<ACTOR_COUNT; i++)
+		{
+			a[i] = new RingActor(exec, i+1);
+		}
+
 		for (int i=0; i<ACTOR_COUNT; i++)
 		{
 			a[i].setNext(a[ (i+1) % ACTOR_COUNT ]);

@@ -23,25 +23,33 @@ T
 F
 "./src/main/java/com/nps/concurrent/Actor.java"
 T
-2 "PersistentThreadActor.java"
+2 "ActorExecution.java"
 F
-"./src/main/java/com/nps/concurrent/PersistentThreadActor.java"
+"./src/main/java/com/nps/concurrent/ActorExecution.java"
 T
-2 "ThreadPoolActorBase.java"
+2 "MessageFilter.java"
 F
-"./src/main/java/com/nps/concurrent/ThreadPoolActorBase.java"
+"./src/main/java/com/nps/concurrent/MessageFilter.java"
 T
-2 "TransientThreadActor.java"
+2 "PersistentThreadActorExecution.java"
 F
-"./src/main/java/com/nps/concurrent/TransientThreadActor.java"
+"./src/main/java/com/nps/concurrent/PersistentThreadActorExecution.java"
+T
+2 "TransientThreadActorExecution.java"
+F
+"./src/main/java/com/nps/concurrent/TransientThreadActorExecution.java"
+T
+2 "ThreadPoolActorExecution.java"
+F
+"./src/main/java/com/nps/concurrent/ThreadPoolActorExecution.java"
 T
 2 "ActorThreadPool.java"
 F
 "./src/main/java/com/nps/concurrent/ActorThreadPool.java"
 T
-2 "ThreadPoolActor.java"
+2 "JITThreadActorExecution.java"
 F
-"./src/main/java/com/nps/concurrent/ThreadPoolActor.java"
+"./src/main/java/com/nps/concurrent/JITThreadActorExecution.java"
 T
 2 "InvalidMessage.java"
 F
@@ -54,17 +62,9 @@ T
 F
 "./src/test/java/com/nps/concurrent/RingTest.java"
 T
-2 "PersistentThreadRingActor.java"
+2 "RingActor.java"
 F
-"./src/test/java/com/nps/concurrent/PersistentThreadRingActor.java"
-T
-2 "TransientThreadRingActor.java"
-F
-"./src/test/java/com/nps/concurrent/TransientThreadRingActor.java"
-T
-2 "ThreadPoolRingActor.java"
-F
-"./src/test/java/com/nps/concurrent/ThreadPoolRingActor.java"
+"./src/test/java/com/nps/concurrent/RingActor.java"
 T
 2 "RingMessage.java"
 F

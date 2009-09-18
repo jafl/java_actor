@@ -17,6 +17,14 @@ public class PersistentThreadActorExecution
 	}
 
 	/**
+	 * Duplicate this execution context for use by another actor.
+	 */
+	/* package */ ActorExecution dup()
+	{
+		return new PersistentThreadActorExecution();
+	}
+
+	/**
 	 * Unregister this actor with the system.
 	 */
 	protected final void die()

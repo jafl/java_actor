@@ -10,8 +10,17 @@ public class JITThreadActorExecution
 	extends TransientThreadActorExecution
 {
 	/**
+	 * Duplicate this execution context for use by another actor.
+	 */
+	/* package */ ActorExecution dup()
+	{
+		return new JITThreadActorExecution();
+	}
+
+	/**
 	 * Finalize this function.
 	 */
+	@Override
 	protected final void die()
 	{
 		super.die();

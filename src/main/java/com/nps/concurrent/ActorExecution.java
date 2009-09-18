@@ -139,6 +139,11 @@ import java.util.Iterator;
 	}
 
 	/**
+	 * Duplicate this execution context for use by another actor.
+	 */
+	abstract /* package */ ActorExecution dup();
+
+	/**
 	 * Unregister this actor with the thread management system.
 	 */
 	abstract /* package */ void die();
@@ -148,6 +153,14 @@ import java.util.Iterator;
 	 * message.
 	 */
 	abstract protected void notifyMessageAvailable();
+
+	/**
+	 * @return	true if this execution context already has an actor
+	 */
+	/* package */ final boolean hasActor()
+	{
+		return (itsActor != null);
+	}
 
 	/**
 	 * Sets the actor.

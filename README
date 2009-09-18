@@ -24,6 +24,10 @@ Each actor must be configured with an execution model:
    * com.nps.concurrent.ThreadPoolActorExecution
    * com.nps.concurrent.JITThreadActorExecution
 
+Ideally, you should instantiate a separate execution instance for each
+actor.  However, for convenience, you can pass the same execution instance
+to multiple actors, and it will be duplicated for you.
+
 Each ThreadPoolActorExecution requires that you provide an ActorThreadPool
 in which the actor will run.  You can have multiple ActorThreadPools, but
 each Actor runs in a single, specific pool.  Actors that are constantly

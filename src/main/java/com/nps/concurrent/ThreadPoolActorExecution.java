@@ -18,8 +18,17 @@ public class ThreadPoolActorExecution
 	}
 
 	/**
+	 * Duplicate this execution context for use by another actor.
+	 */
+	/* package */ ActorExecution dup()
+	{
+		return new ThreadPoolActorExecution(itsThreadPool);
+	}
+
+	/**
 	 * Finalize this function.
 	 */
+	@Override
 	protected final void die()
 	{
 		super.die();

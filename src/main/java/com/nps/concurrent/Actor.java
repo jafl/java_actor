@@ -22,7 +22,15 @@ public abstract class Actor
 	protected Actor(
 		ActorExecution exec)
 	{
-		itsExecution = exec;
+		if (exec.hasActor())
+		{
+			itsExecution = exec.dup();			
+		}
+		else
+		{
+			itsExecution = exec;
+		}
+
 		itsExecution.setActor(this);
 	}
 
