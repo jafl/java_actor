@@ -55,9 +55,11 @@ Change Log
 
    * Refactored SimpleActor into Actor and PersistentThreadAgent.
      Instead of using inheritance, an actor must be passed an agent.
-   * Actor.process() no longer returns boolean.  Call die() instead.
-   * Created ThreadPoolAgent for actors that do not require dedicated threads.
-   * Created JITPoolAgent for actors that should create a thread on demand.
+   * Renamed Actor.die() to Actor.retire().
+   * Renamed Actor.process() to Actor.act().
+   * Actor.act() no longer returns boolean.  Call retire() instead.
    * Fixed appropriate classes to be public.
    * Moved MessageFilter class out of ActorBase.
    * Added get/setMessageFilter() to Agent.
+   * Created ThreadPoolAgent for actors that do not require dedicated threads.
+   * Created JITPoolAgent for actors that should create a thread on demand.

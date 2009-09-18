@@ -9,7 +9,7 @@ package com.nps.concurrent;
 public class PersistentThreadAgent
 	extends Agent
 {
-	private boolean	itsAliveFlag = true;
+	private boolean	itsRetiredFlag = false;
 
 	public PersistentThreadAgent()
 	{
@@ -17,7 +17,7 @@ public class PersistentThreadAgent
 	}
 
 	/**
-	 * Duplicate this execution context for use by another actor.
+	 * Duplicate this agent for use by another actor.
 	 */
 	/* package */ Agent dup()
 	{
@@ -27,9 +27,9 @@ public class PersistentThreadAgent
 	/**
 	 * Unregister this actor with the system.
 	 */
-	protected final void die()
+	protected final void retire()
 	{
-		itsAliveFlag = false;
+		itsRetiredFlag = true;
 	}
 
 	/**
@@ -37,7 +37,7 @@ public class PersistentThreadAgent
 	 */
 	public final void run()
 	{
-		while (itsAliveFlag)
+		while (!itsRetiredFlag)
 		{
 			waitForMessage();
 
@@ -46,9 +46,9 @@ public class PersistentThreadAgent
 			// and next(), because the number of messages can only
 			// increase.
 
-			while (itsAliveFlag && hasPendingMessages())
+			while (!itsRetiredFlag && hasPendingMessages())
 			{
-				process(next());
+				act(next());
 			}
 		}
 	}

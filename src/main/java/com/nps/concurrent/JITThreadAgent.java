@@ -10,7 +10,7 @@ public class JITThreadAgent
 	extends TransientThreadAgent
 {
 	/**
-	 * Duplicate this execution context for use by another actor.
+	 * Duplicate this agent for use by another actor.
 	 */
 	/* package */ Agent dup()
 	{
@@ -21,9 +21,9 @@ public class JITThreadAgent
 	 * Finalize this function.
 	 */
 	@Override
-	protected final void die()
+	protected final void retire()
 	{
-		super.die();
+		super.retire();
 	}
 
 	/**
@@ -31,7 +31,7 @@ public class JITThreadAgent
 	 */
 	protected final void notifyMessageAvailable()
 	{
-		if (isAlive())
+		if (!isRetired())
 		{
 			new Thread(this).start();
 		}

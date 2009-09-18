@@ -7,11 +7,11 @@ import java.util.Iterator;
 /**
  * Abstract base class for implementing an Erlang actor.  Each actor runs
  * in a separate thread, but how actors are mapped to threads is left up to
- * the derived class:  implement <code>run()</code>, <code>die()</code>,
+ * the derived class:  implement <code>run()</code>, <code>retire()</code>,
  * <code>notifyMessageAvailable()</code>.
  * 
  * To be useful, an Actor must installed on which to call
- * <code>process()</code>, so messages will be processed.  The Actor can
+ * <code>act()</code>, so messages will be processed.  The Actor can
  * optionally install a <code>MessageFilter</code> to filter messages.
  * 
  * @author John Lindal
@@ -139,15 +139,15 @@ import java.util.Iterator;
 	}
 
 	/**
-	 * Duplicate this execution context for use by another actor.  This
-	 * does not copy the message filter.
+	 * Duplicate this agent for use by another actor.  This does not copy
+	 * the message filter.
 	 */
 	abstract /* package */ Agent dup();
 
 	/**
 	 * Unregister this actor with the thread management system.
 	 */
-	abstract /* package */ void die();
+	abstract /* package */ void retire();
 
 	/**
 	 * Notify the thread management system that this actor has received a
@@ -156,7 +156,7 @@ import java.util.Iterator;
 	abstract protected void notifyMessageAvailable();
 
 	/**
-	 * @return	true if this execution context already has an actor
+	 * @return	true if this agent already has an actor
 	 */
 	/* package */ final boolean hasActor()
 	{
@@ -181,9 +181,9 @@ import java.util.Iterator;
 	 * 
 	 * @param msg	the message
 	 */
-	protected final void process(
+	protected final void act(
 		Object msg)
 	{
-		itsActor.process(msg);
+		itsActor.act(msg);
 	}
 }

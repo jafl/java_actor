@@ -20,7 +20,7 @@ class RingActor
 		itsNextActor = a;
 	}
 
-	protected void process(
+	protected void act(
 		Object msg)
 	{
 		RingMessage rmsg = (RingMessage) msg;

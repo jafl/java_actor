@@ -9,26 +9,26 @@ package com.nps.concurrent;
 /* package */ abstract class TransientThreadAgent
 	extends Agent
 {
-	private boolean	itsAliveFlag   = true;
+	private boolean	itsRetiredFlag = false;
 	private Boolean	itsRunningFlag = Boolean.FALSE;
 
 	/**
 	 * @return	true if the actor is still alive
 	 */
-	public boolean isAlive()
+	public boolean isRetired()
 	{
-		return itsAliveFlag;
+		return itsRetiredFlag;
 	}
 
 	/**
 	 * Derived classes must unregister this actor from the system.
 	 * 
-	 * Only process() can call die(), so itsRunningFlag is set, so we don't
+	 * Only act() can call retire(), so itsRunningFlag is set, so we don't
 	 * need to synchronize with other threads.
 	 */
-	protected void die()
+	protected void retire()
 	{
-		itsAliveFlag = false;
+		itsRetiredFlag = true;
 	}
 
 	/**
@@ -60,17 +60,18 @@ package com.nps.concurrent;
 
 		while (hasMessage)
 		{
-			process(next());
+			act(next());
 
 			synchronized (itsRunningFlag)
 			{
-				hasMessage = (itsAliveFlag ? hasPendingMessages() : false);
+				hasMessage = (!itsRetiredFlag ? hasPendingMessages() : false);
 
-				// If die() was called, leave itsRunningFlag set to short
-				// circuit all pending calls.  No new calls will be queued
-				// since die() must remove us from the actor pool.
+				// If retire() was called, leave itsRunningFlag set to
+				// short circuit all pending calls.  No new calls will be
+				// queued since retire() must remove us from the actor
+				// pool.
 
-				if (itsAliveFlag && !hasMessage)
+				if (!itsRetiredFlag && !hasMessage)
 				{
 					itsRunningFlag = Boolean.FALSE;
 				}

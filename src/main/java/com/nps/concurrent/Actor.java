@@ -7,11 +7,11 @@ import java.util.Iterator;
 /**
  * Abstract base class for implementing an Erlang actor.  Each actor runs
  * in a separate thread, but how actors are mapped to threads is left up to
- * the execution model.
+ * the agent.
  * 
- * Derived classes must implement <code>process()</code> to process
- * messages and can optionally install a <code>MessageFilter</code> into
- * the execution model to filter messages.
+ * Derived classes must implement <code>act()</code> to respond to messages
+ * and can optionally install a <code>MessageFilter</code> into the
+ * agent to filter messages.
  * 
  * @author John Lindal
  */
@@ -92,9 +92,9 @@ public abstract class Actor
 	/**
 	 * Unregister this actor with the thread management system.
 	 */
-	protected void die()
+	protected void retire()
 	{
-		itsAgent.die();
+		itsAgent.retire();
 	}
 
 	/**
@@ -103,5 +103,5 @@ public abstract class Actor
 	 * 
 	 * @param msg	the message
 	 */
-	abstract protected void process(Object msg);
+	abstract protected void act(Object msg);
 }

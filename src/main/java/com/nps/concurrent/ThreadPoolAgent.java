@@ -18,7 +18,7 @@ public class ThreadPoolAgent
 	}
 
 	/**
-	 * Duplicate this execution context for use by another actor.
+	 * Duplicate this agent for use by another actor.
 	 */
 	/* package */ Agent dup()
 	{
@@ -29,9 +29,9 @@ public class ThreadPoolAgent
 	 * Finalize this function.
 	 */
 	@Override
-	protected final void die()
+	protected final void retire()
 	{
-		super.die();
+		super.retire();
 	}
 
 	/**
@@ -39,7 +39,7 @@ public class ThreadPoolAgent
 	 */
 	protected final void notifyMessageAvailable()
 	{
-		if (isAlive())
+		if (!isRetired())
 		{
 			itsThreadPool.execute(this);
 		}

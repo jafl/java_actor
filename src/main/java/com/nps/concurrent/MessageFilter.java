@@ -3,7 +3,7 @@ package com.nps.concurrent;
 /**
  * MessageFilter is useful if static rules, e.g., class type or content,
  * determine what messages are accepted.  Dynamic rules, e.g., B only
- * accepted after A, must be implemented by the Actor in process().
+ * accepted after A, must be implemented by the Actor in Actor.act().
  * 
  * @author John Lindal
  */
