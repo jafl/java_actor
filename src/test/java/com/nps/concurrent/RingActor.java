@@ -1,5 +1,10 @@
 package com.nps.concurrent;
 
+/**
+ * An actor who passes a single message around a ring.
+ * 
+ * @author John Lindal
+ */
 class RingActor
 	extends Actor
 {
@@ -23,7 +28,7 @@ class RingActor
 	protected void act(
 		Object msg)
 	{
-		RingMessage rmsg = (RingMessage) msg;
+		TTLMessage rmsg = (TTLMessage) msg;
 
 		long count = rmsg.decrement();
 		if (count > 0)

@@ -1,10 +1,15 @@
 package com.nps.concurrent;
 
-class RingMessage
+/**
+ * A simple message that expires after a given number of bounces.
+ * 
+ * @author John Lindal
+ */
+class TTLMessage
 {
 	private long	itsCount;
 
-	public RingMessage(
+	public TTLMessage(
 		long initCount)
 	{
 		itsCount = initCount;

@@ -39,7 +39,7 @@ package com.nps.concurrent;
 		boolean hasMessage = false;
 		synchronized (itsRunningFlag)
 		{
-			if (itsRunningFlag)
+			if (itsRunningFlag.booleanValue())
 			{
 				return;
 			}

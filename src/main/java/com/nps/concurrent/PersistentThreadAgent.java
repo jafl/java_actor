@@ -9,11 +9,22 @@ package com.nps.concurrent;
 public class PersistentThreadAgent
 	extends Agent
 {
+	private boolean	itsDaemonFlag  = false;
 	private boolean	itsRetiredFlag = false;
 
 	public PersistentThreadAgent()
 	{
-		new Thread(this).start();
+		this(false);
+	}
+
+	public PersistentThreadAgent(
+		boolean daemon)
+	{
+		itsDaemonFlag = daemon;
+
+		Thread t = new Thread(this);
+		t.setDaemon(daemon);
+		t.start();
 	}
 
 	/**
@@ -21,7 +32,7 @@ public class PersistentThreadAgent
 	 */
 	/* package */ Agent dup()
 	{
-		return new PersistentThreadAgent();
+		return new PersistentThreadAgent(itsDaemonFlag);
 	}
 
 	/**

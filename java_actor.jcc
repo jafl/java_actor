@@ -66,9 +66,17 @@ T
 F
 "./src/test/java/com/nps/concurrent/RingActor.java"
 T
-2 "RingMessage.java"
+2 "StockExchangeTest.java"
 F
-"./src/test/java/com/nps/concurrent/RingMessage.java"
+"./src/test/java/com/nps/concurrent/StockExchangeTest.java"
+T
+2 "StockExchangeActor.java"
+F
+"./src/test/java/com/nps/concurrent/StockExchangeActor.java"
+T
+2 "TTLMessage.java"
+F
+"./src/test/java/com/nps/concurrent/TTLMessage.java"
 F
 F
 # tasks
