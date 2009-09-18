@@ -6,26 +6,23 @@ package com.nps.concurrent;
  * 
  * @author John Lindal
  */
-abstract class ThreadPoolActor
-	extends ThreadPoolActorBase
+public class ThreadPoolActorExecution
+	extends TransientThreadActorExecution
 {
-	private ActorThreadPool	itsActorPool;
+	private ActorThreadPool	itsThreadPool;
 
-	protected ThreadPoolActor(
+	public ThreadPoolActorExecution(
 		ActorThreadPool	pool)
 	{
-		itsActorPool = pool;
-		itsActorPool.add(this);
+		itsThreadPool = pool;
 	}
 
 	/**
-	 * Unregister this actor from the system.
+	 * Finalize this function.
 	 */
 	protected final void die()
 	{
 		super.die();
-
-		itsActorPool.remove(this);
 	}
 
 	/**
@@ -35,7 +32,7 @@ abstract class ThreadPoolActor
 	{
 		if (isAlive())
 		{
-			itsActorPool.queue(this);
+			itsThreadPool.execute(this);
 		}
 	}
 }

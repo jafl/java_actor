@@ -6,11 +6,11 @@ class RingActor
 	private long	itsIndex;
 	private Actor	itsNextActor;
 
-	public ThreadPoolRingActor(
-		ActorThreadPool	pool,
+	public RingActor(
+		ActorExecution	exec,
 		long			index)
 	{
-		super(pool);
+		super(exec);
 		itsIndex = index;
 	}
 

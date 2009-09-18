@@ -1,22 +1,50 @@
 package com.nps.concurrent;
 
-public class PersistentThreadActorTest
+import java.util.concurrent.TimeUnit;
+
+public class RingTest
 	extends junit.framework.TestCase
 {
-	public void testRing()
+	private final int ACTOR_COUNT = 503;
+
+	public void testPersistentThreadRing()
 	{
-		PersistentThreadRingActor a[] = new PersistentThreadRingActor[503];
-		for (int i=0; i<503; i++)
+		System.out.println("PersistentThreadActorExecution");
+
+		ring(new PersistentThreadActorExecution(), 1000000);
+	}
+
+	public void testTransientThreadRing()
+	{
+		System.out.println("JITThreadActorExecution");
+
+		ring(new JITThreadActorExecution(), 10000);
+	}
+
+	public void testThreadPoolRing()
+	{
+		System.out.println("ThreadPoolActorExecution");
+
+		ActorThreadPool pool = new ActorThreadPool(25, 100, 1, TimeUnit.SECONDS);
+		ring(new ThreadPoolActorExecution(pool), 1000000);
+	}
+
+	private void ring(
+		ActorExecution	exec,
+		long			timeToLive)
+	{
+		RingActor a[] = new RingActor[ACTOR_COUNT];
+		for (int i=0; i<ACTOR_COUNT; i++)
 		{
-			a[i] = new PersistentThreadRingActor(i+1);
+			a[i] = new RingActor(exec, i+1);
 		}
 
-		for (int i=0; i<503; i++)
+		for (int i=0; i<ACTOR_COUNT; i++)
 		{
-			a[i].setNext(a[ (i+1) % 503 ]);
+			a[i].setNext(a[ (i+1) % ACTOR_COUNT ]);
 		}
 
-		RingMessage msg = new RingMessage(1000000);
+		RingMessage msg = new RingMessage(timeToLive);
 		a[0].recv(msg);
 
 		while (true)

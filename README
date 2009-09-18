@@ -1,6 +1,6 @@
 Introduction
 
-This package provides simple implementations of an Erlang Actor.
+This package provides a simple framework for using Erlang Actors.
 
 Installation
 
@@ -9,50 +9,51 @@ installed Maven, simply run "mvn clean install", and it will build the jar.
 
 Usage
 
-Each actor runs in a separate thread and must extend one of these classes:
+Each actor runs in a separate thread and must extend com.nps.concurrent.Actor.
 
-   * com.nps.concurrent.PersistentThreadActor
-   * com.nps.concurrent.ThreadPoolActor
-   * com.nps.concurrent.JITThreadActor
+Each actor must implement process() to handle messages.  To retrieve
+further messages within process(), call one of the versions of next().  To
+send a message to an actor, invoke recv() on that actor.  Ideally, all
+actors should have no public functions beyond what is required to
+initialize them before the messages start flying, because this eliminates
+the need for locks, but this is probably not realistic in a complex system.
 
-Each actor must implement process() to handle messages.  To retrieve further
-messages within process(), call one of the versions of next().  To send a
-message to an actor, invoke recv() on that actor.  Ideally, all actors
-should have no public functions beyond what is required to initialize them
-before the messages start flying, because this eliminates the need for
-locks, but this is probably not realistic in a complex system.
+Each actor must be configured with an execution model:
 
-Note that each ThreadPoolActor requires that you provide an ActorThreadPool
+   * com.nps.concurrent.PersistentThreadActorExecution
+   * com.nps.concurrent.ThreadPoolActorExecution
+   * com.nps.concurrent.JITThreadActorExecution
+
+Each ThreadPoolActorExecution requires that you provide an ActorThreadPool
 in which the actor will run.  You can have multiple ActorThreadPools, but
-each ThreadPoolActor runs in a single pool.  Actors that are constantly
-busy should extend PersistentThreadActor to avoid monopolizing the threads
-in a pool.  The size of each ActorThreadPool must be tuned to avoid
-congestion.  If there are too few threads, actors may have to wait a long
-time before they get a time slice.  To ensure that all messages are
+each Actor runs in a single, specific pool.  Actors that are constantly
+busy should use PersistentThreadActorExecution to avoid monopolizing the
+threads in a pool.  The size of each ActorThreadPool should be tuned to
+avoid congestion.  If there are too few threads, actors may have to wait a
+long time before they get a time slice.  To ensure that all messages are
 eventually processed, actors must never block waiting for a message.
 Instead, they should sleep after storing internal state describing what to
 do when the expected message eventually arrives.
 
-The unit tests suggest that PersistentThreadActor and ThreadPoolActor are
-equally efficient, though the latter may have to wait for an available
-thread.  JITThreadActor is vastly slower because thread creation is
-expensive, but if you're starved for memory, i.e., you can't use a
-persistent thread, and you don't want to wait in a thread pool queue, then
-this might be an option, especially if it isn't called very often.
-
-Discussion
-
-I would have liked to make the behavior (persistent thread vs. thread pool)
-a strategy instead of requiring inheritance, but I could not find a way to
-factor this out without over-exposing the internals of Actor.  As it is,
-the message queue in Actor is already forced to be protected instead of
-private.
+The unit tests suggest that PersistentThreadActorExecution and
+ThreadPoolActorExecution are equally efficient, though the latter can cause
+actors to wait for an available thread.  JITThreadActor is significantly
+slower because thread creation is expensive, but if you're starved for
+memory, i.e., you can't use a persistent thread, and you don't want to wait
+in a thread pool queue, then this might be an option, especially if it
+doesn't receive messages very often.
 
 Change Log
 
 1.1  John Lindal  2009-09-17
 
-   * Refactored SimpleActor into Actor and PersistentThreadActor.
+   * Refactored SimpleActor into Actor and PersistentThreadActorExecution.
+     Instead of using inheritance, an actor must be passed an execution model.
    * Actor.process() no longer returns boolean.  Call die() instead.
-   * Created ThreadPoolActor for actors that do not require dedicated threads.
+   * Created ThreadPoolActorExecution for actors that do not require
+     dedicated threads.
+   * Created JITPoolActorExecution for actors that should create a thread
+     on demand.
    * Fixed appropriate classes to be public.
+   * Moved MessageFilter class out of ActorBase.
+   * Added get/setMessageFilter() to ActorExecution.

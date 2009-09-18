@@ -1,6 +1,6 @@
 package com.nps.concurrent;
 
-class InvalidMessage
+public class InvalidMessage
 	extends RuntimeException
 {
 	public InvalidMessage()

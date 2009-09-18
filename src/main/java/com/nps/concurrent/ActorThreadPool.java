@@ -1,67 +1,61 @@
 package com.nps.concurrent;
 
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Set;
-import java.util.HashSet;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 /**
- * Manages a thread pool for ThreadPoolActors.
+ * A thread pool for executing ThreadPoolActors.
  * 
  * @author John Lindal
  */
 public class ActorThreadPool
+	extends java.util.concurrent.ThreadPoolExecutor
 {
-	private long					itsPoolSize;
-	private Set<ThreadPoolActor>	itsSleepingActors  =  new HashSet<ThreadPoolActor>();
-	private Set<ThreadPoolActor>	itsWaitingActorSet =  new HashSet<ThreadPoolActor>();
-	private List<ThreadPoolActor>	itsWaitingActors   =  new LinkedList<ThreadPoolActor>();
-	private Set<ThreadPoolActor>	itsRunningActors   =  new HashSet<ThreadPoolActor>();
+	private int	itsPriority = Thread.NORM_PRIORITY;
 
 	public ActorThreadPool(
-		long size)
+		int			corePoolSize,
+		int			maximumPoolSize,
+		long		keepAliveTime,
+		TimeUnit	unit)
 	{
-		itsPoolSize = size;
+		super(corePoolSize, maximumPoolSize, keepAliveTime, unit,
+			  new LinkedBlockingQueue<Runnable>());
 	}
 
 	/**
-	 * Add an actor to this thread pool.
+	 * Get the priority of all threads in this pool.
 	 * 
-	 * @param actor	the ThreadPoolActor
+	 * @return	thread priority
 	 */
-	/* package */ synchronized final void add(
-		ThreadPoolActor actor)
+	public int getPriority()
 	{
-		itsSleepingActors.add(actor);
+		return itsPriority;
 	}
 
 	/**
-	 * Add an actor to this thread pool.
+	 * Set the priority of all new thread executions.
 	 * 
-	 * @param actor	the ThreadPoolActor
+	 * @param priority	new thread priority
 	 */
-	/* package */ synchronized final void queue(
-		ThreadPoolActor actor)
+	public void setPriority(
+		int priority)
 	{
-		itsSleepingActors.remove(actor);
-		itsRunningActors.remove(actor);
-		if (!itsWaitingActorSet.contains(actor))
-		{
-			itsWaitingActors.add(actor);
-		}
+		itsPriority = priority;
 	}
 
 	/**
-	 * Add an actor to this thread pool.
+	 * Set the thread priority before it executes.
 	 * 
-	 * @param actor	the ThreadPoolActor
+	 * @param t	thread that will run
+	 * @param r runnable that will execute
 	 */
-	/* package */ synchronized final void remove(
-		ThreadPoolActor actor)
+	@Override
+	protected void beforeExecute(
+		Thread		t,
+		Runnable	r)
 	{
-		itsSleepingActors.remove(actor);
-		itsWaitingActorSet.remove(actor);
-		itsWaitingActors.remove(actor);
-		itsRunningActors.remove(actor);
+		t.setPriority(itsPriority);
+		super.beforeExecute(t, r);
 	}
 }

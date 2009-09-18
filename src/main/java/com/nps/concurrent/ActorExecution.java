@@ -10,38 +10,42 @@ import java.util.Iterator;
  * the derived class:  implement <code>run()</code>, <code>die()</code>,
  * <code>notifyMessageAvailable()</code>.
  * 
- * Concrete classes must implement <code>process()</code> to process
- * messages and can optionally install a <code>MessageFilter</code> to
- * pre-filter messages.
+ * To be useful, an Actor must installed on which to call
+ * <code>process()</code>, so messages will be processed.  The Actor can
+ * optionally install a <code>MessageFilter</code> to filter messages.
  * 
  * @author John Lindal
  */
 /* package */ abstract class ActorExecution
 	implements Runnable
 {
-	protected List<Object>	itsMessageQueue;	// ought to be private
-	private MessageFilter	itsPrefilter;
+	protected List<Object>	itsMessageQueue = new LinkedList<Object>();		// ought to be private
+	private MessageFilter	itsMessageFilter;
+	private Actor			itsActor;
 
-	protected Actor()
+	/**
+	 * Gets the current filter which determines which messages to accept.
+	 * 
+	 * @return	the installed filter, or null if there is no filter
+	 */
+	public final MessageFilter getMessageFilter()
 	{
-		itsMessageQueue = new LinkedList<Object>();
-	}
-
-	protected interface MessageFilter
-	{
-		/**
-		 * This is useful if static rules, e.g., class type, determine what
-		 * messages are accepted.  Dynamic rules, e.g., B only accepted after
-		 * A, must be implemented in process().
-		 * 
-		 * @param msg	the message
-		 * @return		true if the message is acceptable
-		 */
-		public boolean acceptMessage(Object msg);
+		return itsMessageFilter;
 	}
 
 	/**
-	 * Returns true if this actor has unprocessed messages.
+	 * Sets the filter which determines which messages to accept.
+	 * 
+	 * @param filter	the filter to install
+	 */
+	public final void setMessageFilter(
+		MessageFilter filter)
+	{
+		itsMessageFilter = filter;
+	}
+
+	/**
+	 * Returns true if we have an actor and it has unprocessed messages.
 	 * 
 	 * @return	true if this actor has unprocessed messages
 	 */
@@ -49,7 +53,7 @@ import java.util.Iterator;
 	{
 		synchronized (itsMessageQueue)
 		{
-			return (itsMessageQueue.size() > 0);
+			return (itsActor != null && itsMessageQueue.size() > 0);
 		}
 	}
 
@@ -63,7 +67,7 @@ import java.util.Iterator;
 		Object  msg)
 		throws  InvalidMessage
 	{
-		if (itsPrefilter != null && !itsPrefilter.acceptMessage(msg))
+		if (itsMessageFilter != null && !itsMessageFilter.acceptMessage(msg))
 		{
 			throw new InvalidMessage();
 		}
@@ -80,7 +84,7 @@ import java.util.Iterator;
 	 * 
 	 * @return	the next message
 	 */
-	protected final Object next()
+	/* package */ final Object next()
 	{
 		Object msg;
 		synchronized (itsMessageQueue)
@@ -96,7 +100,7 @@ import java.util.Iterator;
 	 * 
 	 * @return	the next message of the specified type or null if no such message
 	 */
-	protected final Object next(
+	/* package */ final Object next(
 		final Class clazz)
 	{
 		return next(new MessageFilter()
@@ -114,7 +118,7 @@ import java.util.Iterator;
 	 * 
 	 * @return	the first matching message or null if no such message
 	 */
-	protected final Object next(
+	/* package */ final Object next(
 		MessageFilter f)
 	{
 		synchronized (itsMessageQueue)
@@ -137,7 +141,7 @@ import java.util.Iterator;
 	/**
 	 * Unregister this actor with the thread management system.
 	 */
-	abstract protected void die();
+	abstract /* package */ void die();
 
 	/**
 	 * Notify the thread management system that this actor has received a
@@ -146,10 +150,26 @@ import java.util.Iterator;
 	abstract protected void notifyMessageAvailable();
 
 	/**
+	 * Sets the actor.
+	 * 
+	 * @param actor	the actor to execute
+	 */
+	/* package */ final void setActor(
+		Actor actor)
+	{
+		itsActor = actor;
+	}
+
+	/**
 	 * Process a message.  This function is allowed to call next() to
-	 * attempt to retrieve additional messages.
+	 * attempt to retrieve additional messages.  This function should never
+	 * be called unless we have an actor.
 	 * 
 	 * @param msg	the message
 	 */
-	abstract protected void process(Object msg);
+	protected final void process(
+		Object msg)
+	{
+		itsActor.process(msg);
+	}
 }

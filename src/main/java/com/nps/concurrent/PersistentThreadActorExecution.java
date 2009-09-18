@@ -6,12 +6,12 @@ package com.nps.concurrent;
  * 
  * @author John Lindal
  */
-abstract class PersistentThreadActor
-	extends ActorBase
+public class PersistentThreadActorExecution
+	extends ActorExecution
 {
 	private boolean	itsAliveFlag = true;
 
-	protected PersistentThreadActor()
+	public PersistentThreadActorExecution()
 	{
 		new Thread(this).start();
 	}

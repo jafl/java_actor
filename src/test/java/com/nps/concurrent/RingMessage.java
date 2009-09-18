@@ -1,6 +1,6 @@
 package com.nps.concurrent;
 
-public class RingMessage
+class RingMessage
 {
 	private long	itsCount;
 

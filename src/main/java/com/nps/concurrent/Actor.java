@@ -7,37 +7,23 @@ import java.util.Iterator;
 /**
  * Abstract base class for implementing an Erlang actor.  Each actor runs
  * in a separate thread, but how actors are mapped to threads is left up to
- * the derived class:  implement <code>run()</code>, <code>die()</code>,
- * <code>notifyMessageAvailable()</code>.
+ * the execution model.
  * 
- * Concrete classes must implement <code>process()</code> to process
- * messages and can optionally install a <code>MessageFilter</code> to
- * pre-filter messages.
+ * Derived classes must implement <code>process()</code> to process
+ * messages and can optionally install a <code>MessageFilter</code> into
+ * the execution model to filter messages.
  * 
  * @author John Lindal
  */
-abstract class ActorBase
-	implements Runnable
+public abstract class Actor
 {
-	protected List<Object>	itsMessageQueue;	// ought to be private
-	private MessageFilter	itsPrefilter;
+	private ActorExecution	itsExecution;
 
-	protected ActorBase()
+	protected Actor(
+		ActorExecution exec)
 	{
-		itsMessageQueue = new LinkedList<Object>();
-	}
-
-	protected interface MessageFilter
-	{
-		/**
-		 * This is useful if static rules, e.g., class type, determine what
-		 * messages are accepted.  Dynamic rules, e.g., B only accepted after
-		 * A, must be implemented in process().
-		 * 
-		 * @param msg	the message
-		 * @return		true if the message is acceptable
-		 */
-		public boolean acceptMessage(Object msg);
+		itsExecution = exec;
+		itsExecution.setActor(this);
 	}
 
 	/**
@@ -47,10 +33,7 @@ abstract class ActorBase
 	 */
 	public final boolean hasPendingMessages()
 	{
-		synchronized (itsMessageQueue)
-		{
-			return (itsMessageQueue.size() > 0);
-		}
+		return itsExecution.hasPendingMessages();
 	}
 
 	/**
@@ -63,16 +46,7 @@ abstract class ActorBase
 		Object  msg)
 		throws  InvalidMessage
 	{
-		if (itsPrefilter != null && !itsPrefilter.acceptMessage(msg))
-		{
-			throw new InvalidMessage();
-		}
-
-		synchronized (itsMessageQueue)
-		{
-			itsMessageQueue.add(msg);
-			notifyMessageAvailable();
-		}
+		itsExecution.recv(msg);
 	}
 
 	/**
@@ -82,13 +56,7 @@ abstract class ActorBase
 	 */
 	protected final Object next()
 	{
-		Object msg;
-		synchronized (itsMessageQueue)
-		{
-			msg = itsMessageQueue.remove(0);
-		}
-
-		return msg;
+		return itsExecution.next();
 	}
 
 	/**
@@ -97,16 +65,9 @@ abstract class ActorBase
 	 * @return	the next message of the specified type or null if no such message
 	 */
 	protected final Object next(
-		final Class clazz)
+		Class clazz)
 	{
-		return next(new MessageFilter()
-		{
-			public boolean acceptMessage(
-				Object msg)
-			{
-				return clazz.isInstance(msg);
-			}
-		});
+		return itsExecution.next(clazz);
 	}
 
 	/**
@@ -117,33 +78,16 @@ abstract class ActorBase
 	protected final Object next(
 		MessageFilter f)
 	{
-		synchronized (itsMessageQueue)
-		{
-			Iterator iter = itsMessageQueue.iterator();
-			while (iter.hasNext())
-			{
-				Object msg = iter.next();
-				if (f.acceptMessage(msg))
-				{
-					iter.remove();
-					return msg;
-				}
-			}
-		}
-
-		return null;
+		return itsExecution.next(f);
 	}
 
 	/**
 	 * Unregister this actor with the thread management system.
 	 */
-	abstract protected void die();
-
-	/**
-	 * Notify the thread management system that this actor has received a
-	 * message.
-	 */
-	abstract protected void notifyMessageAvailable();
+	protected void die()
+	{
+		itsExecution.die();
+	}
 
 	/**
 	 * Process a message.  This function is allowed to call next() to

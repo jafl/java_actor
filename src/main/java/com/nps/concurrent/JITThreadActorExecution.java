@@ -6,8 +6,8 @@ package com.nps.concurrent;
  * 
  * @author John Lindal
  */
-abstract class TransientThreadActor
-	extends ThreadPoolActorBase
+public class JITThreadActorExecution
+	extends TransientThreadActorExecution
 {
 	/**
 	 * Finalize this function.
