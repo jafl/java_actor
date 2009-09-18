@@ -1,24 +1,26 @@
 package com.nps.concurrent;
 
-public class PersistentThreadRingActor
-	extends PersistentThreadActor
+class RingActor
+	extends Actor
 {
-	private long					itsIndex;
-	private PersistentThreadActor	itsNextActor;
+	private long	itsIndex;
+	private Actor	itsNextActor;
 
-	public PersistentThreadRingActor(
-		long index)
+	public ThreadPoolRingActor(
+		ActorThreadPool	pool,
+		long			index)
 	{
+		super(pool);
 		itsIndex = index;
 	}
 
 	public void setNext(
-		PersistentThreadActor a)
+		Actor a)
 	{
 		itsNextActor = a;
 	}
 
-	protected boolean process(
+	protected void process(
 		Object msg)
 	{
 		RingMessage rmsg = (RingMessage) msg;
@@ -40,7 +42,5 @@ public class PersistentThreadRingActor
 				msg.notify();
 			}
 		}
-
-		return true;
 	}
 }

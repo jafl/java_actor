@@ -40,10 +40,7 @@ abstract class PersistentThreadActor
 
 			while (itsAliveFlag && hasPendingMessages())
 			{
-				if (!process(next()))
-				{
-					break;
-				}
+				process(next());
 			}
 		}
 	}

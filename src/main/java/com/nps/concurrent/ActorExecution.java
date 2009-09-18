@@ -16,13 +16,13 @@ import java.util.Iterator;
  * 
  * @author John Lindal
  */
-abstract class ActorBase
+/* package */ abstract class ActorExecution
 	implements Runnable
 {
 	protected List<Object>	itsMessageQueue;	// ought to be private
 	private MessageFilter	itsPrefilter;
 
-	protected ActorBase()
+	protected Actor()
 	{
 		itsMessageQueue = new LinkedList<Object>();
 	}
@@ -150,7 +150,6 @@ abstract class ActorBase
 	 * attempt to retrieve additional messages.
 	 * 
 	 * @param msg	the message
-	 * @return		false to terminate the actor
 	 */
-	abstract protected boolean process(Object msg);
+	abstract protected void process(Object msg);
 }
