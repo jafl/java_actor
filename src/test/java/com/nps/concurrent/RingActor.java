@@ -33,10 +33,6 @@ class RingActor
 		long count = rmsg.decrement();
 		if (count > 0)
 		{
-			if (count % 10000 == 0)
-			{
-				System.out.println(count);
-			}
 			itsNextActor.recv(msg);
 		}
 		else

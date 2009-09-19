@@ -14,8 +14,6 @@ import java.util.concurrent.atomic.AtomicLong;
 class StockExchangeActor
 	extends Actor
 {
-	public static Object theTestLock = new Object();
-
 	private static List<Actor>	theActors         = new ArrayList<Actor>();
 	private static List<Actor>	theActorsWithMsgs = new ArrayList<Actor>();
 	private static Random		theRNG            = new Random();
@@ -38,7 +36,7 @@ class StockExchangeActor
 
 		itsMessageCount = itsRNG.nextInt(maxMessageCount);
 
-		scheduleNextMessage();
+		scheduleNextMessage(100);	// wait for all actors to be created
 	}
 
 	protected void act(
@@ -58,9 +56,9 @@ class StockExchangeActor
 //			System.out.println("Dropping a message; " + liveMsgCount + " msgs; " + liveActors + " actors");
 			if (liveMsgCount <= 0 && liveActors == 0)
 			{
-				synchronized (theTestLock)
+				synchronized (StockExchangeTest.theTestLock)
 				{
-					theTestLock.notify();
+					StockExchangeTest.theTestLock.notify();
 				}
 			}
 		}
@@ -71,11 +69,12 @@ class StockExchangeActor
 		return itsRNG.nextInt(theActors.size());
 	}
 
-	private void scheduleNextMessage()
+	private void scheduleNextMessage(
+		int minDelay)
 	{
 		theTimer.schedule(
 			new SendMessageTask(this),
-			1 + itsRNG.nextInt(MAX_MSG_DELAY));
+			1 + minDelay + itsRNG.nextInt(MAX_MSG_DELAY));
 	}
 
 	class SendMessageTask
@@ -91,7 +90,9 @@ class StockExchangeActor
 
 		public final void run()
 		{
-			theMessageCount.incrementAndGet();
+			long liveMsgCount = theMessageCount.incrementAndGet();
+			StockExchangeTest.theMaxLiveMsgCount =
+				Math.max(StockExchangeTest.theMaxLiveMsgCount, liveMsgCount);
 			itsActor.itsMessageCount--;
 
 			TTLMessage msg = new TTLMessage(5 + itsRNG.nextInt(MAX_MSG_TTL-5));
@@ -99,7 +100,7 @@ class StockExchangeActor
 
 			if (itsMessageCount > 0)
 			{
-				itsActor.scheduleNextMessage();
+				itsActor.scheduleNextMessage(0);
 			}
 			else
 			{

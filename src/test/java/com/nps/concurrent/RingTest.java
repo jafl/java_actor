@@ -13,6 +13,16 @@ public class RingTest
 {
 	private final int ACTOR_COUNT = 503;
 
+	public void setUp()
+	{
+		Agent.addMessageSpy(new RingSpy(10000));
+	}
+
+	public void tearDown()
+	{
+		Agent.removeAllMessageSpies();
+	}
+
 	public void testPersistentThreads()
 	{
 		System.out.println("PersistentThreadAgent");

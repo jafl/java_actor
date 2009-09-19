@@ -58,7 +58,26 @@ memory, i.e., you can't use a persistent thread, and you don't want to wait
 in a thread pool queue, then this might be an option, especially if it
 doesn't receive messages very often.
 
+To log or monitor messages in the system, you can install MessageSpy
+objects.  Each spy gets to see every message that is sent, along with
+whether or not is is accepted by the recipient.
+
+Patterns
+
+The simplest post office is a static function or an object that directly
+dispatches messages to a set of actors.  If the senders need to be extra
+fast, an actor can be used as the post office, so the dispatching logic is
+not executed in the sender's thread.
+
+To implement parallel processing within an actor, i.e., a load balanced
+cluster, use java.util.concurrent.ThreadPoolExecutor.
+
 Change Log
+
+1.2  John Lindal 2009-09-19
+
+   * Added MessageSpy to allow logging and monitoring of all messages.
+   * Added discussion of behavior patterns.
 
 1.1  John Lindal  2009-09-17
 

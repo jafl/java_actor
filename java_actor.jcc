@@ -27,6 +27,10 @@ T
 F
 "./src/main/java/com/nps/concurrent/Agent.java"
 T
+2 "MessageSpy.java"
+F
+"./src/main/java/com/nps/concurrent/MessageSpy.java"
+T
 2 "MessageFilter.java"
 F
 "./src/main/java/com/nps/concurrent/MessageFilter.java"
@@ -65,6 +69,10 @@ T
 2 "RingActor.java"
 F
 "./src/test/java/com/nps/concurrent/RingActor.java"
+T
+2 "RingSpy.java"
+F
+"./src/test/java/com/nps/concurrent/RingSpy.java"
 T
 2 "StockExchangeTest.java"
 F

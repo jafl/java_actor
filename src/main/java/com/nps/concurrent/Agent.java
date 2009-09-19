@@ -19,12 +19,41 @@ import java.util.Iterator;
 /* package */ abstract class Agent
 	implements Runnable
 {
+	private static List<MessageSpy>	theMessageSpies;
+
 	protected List<Object>	itsMessageQueue = new LinkedList<Object>();		// derived classes need to synchronize on this
 	private MessageFilter	itsMessageFilter;
 	private Actor			itsActor;
 
 	/**
-	 * Gets the current filter which determines which messages to accept.
+	 * Add a MessageSpy to watch the flow of messages.
+	 * 
+	 * @param spy	the spy to install
+	 */
+	public static void addMessageSpy(
+		MessageSpy spy)
+	{
+		if (theMessageSpies == null)
+		{
+			theMessageSpies = new LinkedList<MessageSpy>();
+		}
+
+		synchronized (theMessageSpies)
+		{
+			theMessageSpies.add(spy);
+		}
+	}
+
+	/**
+	 * Remove all MessageSpy objects.
+	 */
+	public static void removeAllMessageSpies()
+	{
+		theMessageSpies = null;
+	}
+
+	/**
+	 * Get the current filter which determines which messages to accept.
 	 * 
 	 * @return	the installed filter, or null if there is no filter
 	 */
@@ -34,7 +63,7 @@ import java.util.Iterator;
 	}
 
 	/**
-	 * Sets the filter which determines which messages to accept.
+	 * Set the filter which determines which messages to accept.
 	 * 
 	 * @param filter	the filter to install
 	 */
@@ -67,7 +96,20 @@ import java.util.Iterator;
 		Object  msg)
 		throws  InvalidMessage
 	{
-		if (itsMessageFilter != null && !itsMessageFilter.acceptMessage(msg))
+		boolean accepted = (itsMessageFilter == null || itsMessageFilter.acceptMessage(msg));
+
+		if (theMessageSpies != null)
+		{
+			synchronized (theMessageSpies)
+			{
+				for (MessageSpy spy : theMessageSpies)
+				{
+					spy.observeMessage(msg, accepted);
+				}
+			}
+		}
+
+		if (!accepted)
 		{
 			throw new InvalidMessage();
 		}

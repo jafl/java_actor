@@ -6,6 +6,9 @@ import java.util.concurrent.TimeUnit;
 public class StockExchangeTest
 	extends junit.framework.TestCase
 {
+	public static Object	theTestLock = new Object();
+	public static long		theMaxLiveMsgCount;
+
 	public void testPersistentThreads()
 	{
 		System.out.println("PersistentThreadAgent");
@@ -38,6 +41,8 @@ public class StockExchangeTest
 		int		actorCount,
 		int		maxMessageCount)
 	{
+		theMaxLiveMsgCount = 0;
+
 		StockExchangeActor a[] = new StockExchangeActor[actorCount];
 		for (int i=0; i<actorCount; i++)
 		{
@@ -46,11 +51,11 @@ public class StockExchangeTest
 
 		while (true)
 		{
-			synchronized (StockExchangeActor.theTestLock)
+			synchronized (theTestLock)
 			{
 				try
 				{
-					StockExchangeActor.theTestLock.wait();
+					theTestLock.wait();
 				}
 				catch (InterruptedException ex)
 				{
@@ -62,5 +67,7 @@ public class StockExchangeTest
 		}
 
 		StockExchangeActor.flushActorList();
+
+		System.out.println("Maximum active messages: " + theMaxLiveMsgCount);
 	}
 }
