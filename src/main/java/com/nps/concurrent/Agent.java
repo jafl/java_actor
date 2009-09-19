@@ -19,7 +19,7 @@ import java.util.Iterator;
 /* package */ abstract class Agent
 	implements Runnable
 {
-	protected List<Object>	itsMessageQueue = new LinkedList<Object>();		// ought to be private
+	protected List<Object>	itsMessageQueue = new LinkedList<Object>();		// derived classes need to synchronize on this
 	private MessageFilter	itsMessageFilter;
 	private Actor			itsActor;
 

@@ -9,8 +9,9 @@ package com.nps.concurrent;
 /* package */ abstract class TransientThreadAgent
 	extends Agent
 {
-	private boolean	itsRetiredFlag = false;
-	private Boolean	itsRunningFlag = Boolean.FALSE;
+	private boolean itsRetiredFlag = false;
+	private Object	itsRunningLock = new Object();	// can't use itsRunningFlag, because it changes
+	private Boolean itsRunningFlag = Boolean.FALSE;
 
 	/**
 	 * @return	true if the actor is still alive
@@ -37,9 +38,9 @@ package com.nps.concurrent;
 	public final void run()
 	{
 		boolean hasMessage = false;
-		synchronized (itsRunningFlag)
+		synchronized (itsRunningLock)
 		{
-			if (itsRunningFlag.booleanValue())
+			if (itsRunningFlag)
 			{
 				return;
 			}
@@ -62,7 +63,7 @@ package com.nps.concurrent;
 		{
 			act(next());
 
-			synchronized (itsRunningFlag)
+			synchronized (itsRunningLock)
 			{
 				hasMessage = (!itsRetiredFlag ? hasPendingMessages() : false);
 

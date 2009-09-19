@@ -4,8 +4,17 @@ This package provides a simple framework for using Erlang Actors.
 
 Installation
 
-This package is built using Maven (http://maven.apache.org/).  Once you have
-installed Maven, simply run "mvn clean install", and it will build the jar.
+This package is built using Maven (http://maven.apache.org/).  Once you
+have installed Maven, run one of the following commands:
+
+  To include unit tests:
+    mvn clean install -Dmaven.surefire.debug="-Xmx512m"
+
+  To skip unit tests:
+    mvn clean install -Dmaven.test.skip=true
+
+Either command will install the jar into your local maven repository.  The
+artifact is com.nps.concurrent:actor.
 
 Usage
 
@@ -24,10 +33,10 @@ Each actor must be configured with an agent:
    * com.nps.concurrent.ThreadPoolAgent
    * com.nps.concurrent.JITThreadAgent
 
-Ideally, you should instantiate a separate agent instance for each actor.
-However, for convenience, you can pass the same agent instance to multiple
-actors, and it will be duplicated for you.  Note that each actor is
-expected to install its own MessageFilter, so this is not copied.
+Every Actor requires a separate instance of Agent.  For convenience, you
+can pass the same Agent to multiple actors, and it will be duplicated for
+you.  Note that each actor is expected to install its own MessageFilter, so
+this is not copied.
 
 Each ThreadPoolAgent requires that you provide an ActorThreadPool in which
 the actor will run.  You can have multiple ActorThreadPools, but each Actor
@@ -53,6 +62,7 @@ Change Log
 
 1.1  John Lindal  2009-09-17
 
+   * Changed the groupId to com.nps.concurrent
    * Refactored SimpleActor into Actor and PersistentThreadAgent.
      Instead of using inheritance, an actor must be passed an agent.
    * Renamed Actor.die() to Actor.retire().

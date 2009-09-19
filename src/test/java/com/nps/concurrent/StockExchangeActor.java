@@ -19,13 +19,13 @@ class StockExchangeActor
 	private static List<Actor>	theActors         = new ArrayList<Actor>();
 	private static List<Actor>	theActorsWithMsgs = new ArrayList<Actor>();
 	private static Random		theRNG            = new Random();
+	private static Timer		theTimer          = new Timer();
 	private static AtomicLong	theMessageCount   = new AtomicLong(0);
 
 	private static final int MAX_MSG_DELAY = 100;	// milliseconds
 	private static final int MAX_MSG_TTL   = 1000;	// bounces
 
-	private Random	itsRNG   = new Random(theRNG.nextLong());
-	private Timer	itsTimer = new Timer();
+	private Random	itsRNG = new Random(theRNG.nextLong());
 	private long	itsMessageCount;
 
 	public StockExchangeActor(
@@ -53,8 +53,10 @@ class StockExchangeActor
 		}
 		else
 		{
-			if (theMessageCount.decrementAndGet() <= 0 &&
-				theActorsWithMsgs.size() == 0)
+			long liveMsgCount = theMessageCount.decrementAndGet();
+			long liveActors   = theActorsWithMsgs.size();
+//			System.out.println("Dropping a message; " + liveMsgCount + " msgs; " + liveActors + " actors");
+			if (liveMsgCount <= 0 && liveActors == 0)
 			{
 				synchronized (theTestLock)
 				{
@@ -71,9 +73,9 @@ class StockExchangeActor
 
 	private void scheduleNextMessage()
 	{
-		itsTimer.schedule(
+		theTimer.schedule(
 			new SendMessageTask(this),
-			itsRNG.nextInt(MAX_MSG_DELAY));
+			1 + itsRNG.nextInt(MAX_MSG_DELAY));
 	}
 
 	class SendMessageTask
@@ -90,9 +92,9 @@ class StockExchangeActor
 		public final void run()
 		{
 			theMessageCount.incrementAndGet();
-			itsMessageCount--;
+			itsActor.itsMessageCount--;
 
-			TTLMessage msg = new TTLMessage(itsRNG.nextInt(MAX_MSG_TTL));
+			TTLMessage msg = new TTLMessage(5 + itsRNG.nextInt(MAX_MSG_TTL-5));
 			theActors.get(randomActor()).recv(msg);
 
 			if (itsMessageCount > 0)
@@ -101,7 +103,7 @@ class StockExchangeActor
 			}
 			else
 			{
-				System.out.println("Actor #" + theActors.indexOf(itsActor) + " stops talking");
+				System.out.println("Actor #" + theActors.indexOf(itsActor) + " done generating messages");
 				theActorsWithMsgs.remove(itsActor);
 			}
 		}

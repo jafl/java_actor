@@ -17,14 +17,14 @@ public class RingTest
 	{
 		System.out.println("PersistentThreadAgent");
 
-//		ring(new PersistentThreadAgent(), 1000000);
+		ring(new PersistentThreadAgent(), 1000000);
 	}
 
 	public void testTransientThreads()
 	{
 		System.out.println("JITThreadAgent");
 
-//		ring(new JITThreadAgent(), 10000);
+		ring(new JITThreadAgent(), 10000);
 	}
 
 	public void testThreadPools()
@@ -32,12 +32,12 @@ public class RingTest
 		System.out.println("ThreadPoolAgent (100)");
 
 		ActorThreadPool pool = new ActorThreadPool(25, 100, 1, TimeUnit.SECONDS);
-//		ring(new ThreadPoolAgent(pool), 1000000);
+		ring(new ThreadPoolAgent(pool), 1000000);
 
 		System.out.println("ThreadPoolAgent (10)");
 
 		pool = new ActorThreadPool(1, 10, 1, TimeUnit.SECONDS);
-//		ring(new ThreadPoolAgent(pool), 1000000);
+		ring(new ThreadPoolAgent(pool), 1000000);
 	}
 
 	private void ring(

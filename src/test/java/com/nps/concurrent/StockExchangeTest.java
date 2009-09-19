@@ -10,14 +10,14 @@ public class StockExchangeTest
 	{
 		System.out.println("PersistentThreadAgent");
 
-//		trade(new PersistentThreadAgent(), 100, 1000);
+		trade(new PersistentThreadAgent(), 100, 1000);
 	}
 
 	public void testTransientThreads()
 	{
 		System.out.println("JITThreadAgent");
 
-		trade(new JITThreadAgent(), 100, 100);
+		trade(new JITThreadAgent(), 20, 20);
 	}
 
 	public void testThreadPools()
@@ -30,7 +30,7 @@ public class StockExchangeTest
 		System.out.println("ThreadPoolAgent (10)");
 
 		pool = new ActorThreadPool(1, 10, 1, TimeUnit.SECONDS);
-		trade(new ThreadPoolAgent(pool), 100, 1000);
+		trade(new ThreadPoolAgent(pool), 100, 100);
 	}
 
 	private void trade(
