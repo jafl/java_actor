@@ -49,20 +49,27 @@ must never block waiting for a message.  Instead, they should sleep after
 storing internal state describing what to do when the expected message
 eventually arrives.
 
-The unit tests suggest that ThreadPoolAgent can be faster than
+The test cases suggest that ThreadPoolAgent can be faster than
 PersistentThreadAgent.  The former may have additional latency since it can
-cause actors to wait for an available thread, but having fewer threads
-executing simultaneously can be faster.  JITThreadActor is significantly
-slower because thread creation is expensive, but if you're starved for
-memory, i.e., you can't use a persistent thread, and you don't want to wait
-in a thread pool queue, then this might be an option, especially if it
-doesn't receive messages very often.
+cause actors to wait for an available thread, but having fewer simultaneous
+threads appears to be faster, at least in the JVM that I used.
+JITThreadActor is significantly slower because thread creation is
+expensive, but if you're starved for memory, i.e., you can't use a
+persistent thread, and you don't want to wait in a thread pool queue, then
+this might be an option, especially if it doesn't receive messages very
+often.
 
 To log or monitor messages in the system, you can install MessageSpy
 objects.  Each spy gets to see every message that is sent, along with
 whether or not is is accepted by the recipient.
 
 Patterns
+
+In standard Java, a shared resource would be protected by a mutex.  Within
+the actor paradigm, however, a shared resource is just another actor.  It
+accepts messages to atomically modify the resource and return information
+about its state.  In this situation, atomic means that the actor will
+modify the resource and send a reply before processing any other messages.
 
 The simplest post office is a static function or an object that directly
 dispatches messages to a set of actors.  If the senders need to be extra
