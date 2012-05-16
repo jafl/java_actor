@@ -1,8 +1,9 @@
-Introduction
+This package provides a simple framework for using Erlang Actors in Java.
 
-This package provides a simple framework for using Erlang Actors.
+[![Build Status](https://secure.travis-ci.org/jafl/java_actor.png?branch=master)](http://travis-ci.org/jafl/java_actor)
 
 Installation
+------------
 
 This package is built using Maven (http://maven.apache.org/).  Once you
 have installed Maven, run one of the following commands:
@@ -17,6 +18,7 @@ Either command will install the jar into your local maven repository.  The
 artifact is com.nps.concurrent:actor.
 
 Usage
+-----
 
 Each actor runs in a separate thread and must extend com.nps.concurrent.Actor.
 
@@ -64,6 +66,7 @@ objects.  Each spy gets to see every message that is sent, along with
 whether or not is is accepted by the recipient.
 
 Patterns
+--------
 
 In standard Java, a shared resource would be protected by a mutex.  Within
 the actor paradigm, however, a shared resource is just another actor.  It
@@ -80,6 +83,7 @@ To implement parallel processing within an actor, i.e., a load balanced
 cluster, use java.util.concurrent.ThreadPoolExecutor.
 
 Change Log
+----------
 
 1.2  John Lindal 2009-09-19
 
