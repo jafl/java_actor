@@ -32,7 +32,11 @@ class StockExchangeActor
 	{
 		super(agent);
 		theActors.add(this);
-		theActorsWithMsgs.add(this);
+
+		synchronized (theActorsWithMsgs)
+		{
+			theActorsWithMsgs.add(this);
+		}
 
 		itsMessageCount = itsRNG.nextInt(maxMessageCount);
 
@@ -48,8 +52,10 @@ class StockExchangeActor
 		if (count > 0)
 		{
 			theActors.get(randomActor()).recv(msg);
+			return;
 		}
-		else
+
+		synchronized (theActorsWithMsgs)
 		{
 			long liveMsgCount = theMessageCount.decrementAndGet();
 			long liveActors   = theActorsWithMsgs.size();
@@ -105,7 +111,10 @@ class StockExchangeActor
 			else
 			{
 				System.out.println("Actor #" + theActors.indexOf(itsActor) + " done generating messages");
-				theActorsWithMsgs.remove(itsActor);
+				synchronized (theActorsWithMsgs)
+				{
+					theActorsWithMsgs.remove(itsActor);
+				}
 			}
 		}
 	}
