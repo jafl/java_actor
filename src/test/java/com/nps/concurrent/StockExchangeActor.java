@@ -61,7 +61,7 @@ class StockExchangeActor
 		{
 			long liveMsgCount = theMessageCount.decrementAndGet();
 			long liveActors   = theActorsWithMsgs.size();
-			if (liveActors == 0)
+			if (liveActors < 10)
 				{
 				System.out.println("Dropping a message; " + liveMsgCount + " msgs; " + liveActors + " actors");
 				}
@@ -102,6 +102,8 @@ class StockExchangeActor
 		public final void run()
 		{
 			long liveMsgCount = theMessageCount.incrementAndGet();
+			System.out.println("Creating a message; " + liveMsgCount + " msgs");
+
 			StockExchangeTest.theMaxLiveMsgCount =
 				Math.max(StockExchangeTest.theMaxLiveMsgCount, liveMsgCount);
 			itsActor.itsMessageCount--;
