@@ -61,7 +61,10 @@ class StockExchangeActor
 		{
 			long liveMsgCount = theMessageCount.decrementAndGet();
 			long liveActors   = theActorsWithMsgs.size();
-//			System.out.println("Dropping a message; " + liveMsgCount + " msgs; " + liveActors + " actors");
+			if (liveActors == 0)
+				{
+				System.out.println("Dropping a message; " + liveMsgCount + " msgs; " + liveActors + " actors");
+				}
 			if (liveMsgCount <= 0 && liveActors == 0)
 			{
 				synchronized (StockExchangeTest.theTestLock)
