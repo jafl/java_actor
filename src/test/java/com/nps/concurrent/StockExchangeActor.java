@@ -31,14 +31,16 @@ class StockExchangeActor
 		int		maxMessageCount)
 	{
 		super(agent);
-		theActors.add(this);
 
 		synchronized (theActorsWithMsgs)
 		{
+			theActors.add(this);
+			System.out.println("Actor #" + theActors.size() + " created");
 			theActorsWithMsgs.add(this);
 		}
 
 		itsMessageCount = itsRNG.nextInt(maxMessageCount);
+		System.out.println("Starting with " + itsMessageCount + " messages");
 
 		scheduleNextMessage(100);	// wait for all actors to be created
 	}
@@ -59,7 +61,7 @@ class StockExchangeActor
 		{
 			long liveMsgCount = theMessageCount.decrementAndGet();
 			long liveActors   = theActorsWithMsgs.size();
-//			System.out.println("Dropping a message; " + liveMsgCount + " msgs; " + liveActors + " actors");
+			System.out.println("Dropping a message; " + liveMsgCount + " msgs; " + liveActors + " actors");
 			if (liveMsgCount <= 0 && liveActors == 0)
 			{
 				synchronized (StockExchangeTest.theTestLock)
@@ -114,6 +116,7 @@ class StockExchangeActor
 				synchronized (theActorsWithMsgs)
 				{
 					theActorsWithMsgs.remove(itsActor);
+					System.out.println(theActorsWithMsgs.size() + " active actors remaining");
 				}
 			}
 		}
