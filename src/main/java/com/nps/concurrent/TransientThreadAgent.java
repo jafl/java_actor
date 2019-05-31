@@ -65,7 +65,7 @@ package com.nps.concurrent;
 
 			synchronized (itsRunningLock)
 			{
-				hasMessage = (!itsRetiredFlag ? hasPendingMessages() : false);
+				hasMessage = (!itsRetiredFlag && hasPendingMessages());
 
 				// If retire() was called, leave itsRunningFlag set to
 				// short circuit all pending calls.  No new calls will be
