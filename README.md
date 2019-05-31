@@ -1,6 +1,7 @@
 This package provides a simple framework for using Erlang Actors in Java.
 
 [![Build Status](https://secure.travis-ci.org/jafl/java_actor.png?branch=master)](http://travis-ci.org/jafl/java_actor)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=jafl_java_actor&metric=alert_status)](https://sonarcloud.io/dashboard?id=jafl_java_actor)
 [![Code Coverage](https://img.shields.io/codecov/c/github/jafl/java_actor.svg?style=flat)](https://codecov.io/gh/jafl/java_actor)
 [![Vulnerabilities](https://img.shields.io/snyk/vulnerabilities/github/jafl/java_actor.svg?style=flat)](https://app.snyk.io/org/jafl/projects/)
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/jafl/java_actor.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/jafl/java_actor/alerts/)
