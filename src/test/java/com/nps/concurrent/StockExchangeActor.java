@@ -35,12 +35,12 @@ class StockExchangeActor
 		synchronized (theActorsWithMsgs)
 		{
 			theActors.add(this);
-			System.out.println("Actor #" + theActors.size() + " created");
+			//System.out.println("Actor #" + theActors.size() + " created");
 			theActorsWithMsgs.add(this);
 		}
 
 		itsMessageCount = itsRNG.nextInt(maxMessageCount);
-		System.out.println("Starting with " + itsMessageCount + " messages");
+		//System.out.println("Starting with " + itsMessageCount + " messages");
 
 		scheduleNextMessage(100);	// wait for all actors to be created
 	}
@@ -63,7 +63,7 @@ class StockExchangeActor
 			long liveActors   = theActorsWithMsgs.size();
 			if (liveActors < 10)
 				{
-				System.out.println("Dropping a message; " + liveMsgCount + " msgs; " + liveActors + " actors");
+				//System.out.println("Dropping a message; " + liveMsgCount + " msgs; " + liveActors + " actors");
 				}
 			if (liveMsgCount <= 0 && liveActors == 0)
 			{
@@ -102,7 +102,7 @@ class StockExchangeActor
 		public final void run()
 		{
 			long liveMsgCount = theMessageCount.incrementAndGet();
-			System.out.println("Creating a message; " + liveMsgCount + " msgs");
+			//System.out.println("Creating a message; " + liveMsgCount + " msgs");
 
 			StockExchangeTest.theMaxLiveMsgCount =
 				Math.max(StockExchangeTest.theMaxLiveMsgCount, liveMsgCount);
@@ -121,7 +121,7 @@ class StockExchangeActor
 				synchronized (theActorsWithMsgs)
 				{
 					theActorsWithMsgs.remove(itsActor);
-					System.out.println(theActorsWithMsgs.size() + " active actors remaining");
+					//System.out.println(theActorsWithMsgs.size() + " active actors remaining");
 				}
 			}
 		}
