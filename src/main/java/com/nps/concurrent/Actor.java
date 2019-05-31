@@ -1,9 +1,5 @@
 package com.nps.concurrent;
 
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Iterator;
-
 /**
  * Abstract base class for implementing an Erlang actor.  Each actor runs
  * in a separate thread, but how actors are mapped to threads is left up to
@@ -52,7 +48,6 @@ public abstract class Actor
 	 */
 	public final void recv(
 		Object  msg)
-		throws  InvalidMessage
 	{
 		itsAgent.recv(msg);
 	}
@@ -103,5 +98,5 @@ public abstract class Actor
 	 * 
 	 * @param msg	the message
 	 */
-	abstract protected void act(Object msg);
+	protected abstract void act(Object msg);
 }
