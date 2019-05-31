@@ -82,7 +82,7 @@ import java.util.Iterator;
 	{
 		synchronized (itsMessageQueue)
 		{
-			return (itsActor != null && itsMessageQueue.size() > 0);
+			return (itsActor != null && !itsMessageQueue.isEmpty());
 		}
 	}
 
@@ -94,7 +94,6 @@ import java.util.Iterator;
 	 */
 	public final void recv(
 		Object  msg)
-		throws  InvalidMessage
 	{
 		boolean accepted = (itsMessageFilter == null || itsMessageFilter.acceptMessage(msg));
 
@@ -184,18 +183,18 @@ import java.util.Iterator;
 	 * Duplicate this agent for use by another actor.  This does not copy
 	 * the message filter.
 	 */
-	abstract /* package */ Agent dup();
+	/* package */ abstract Agent dup();
 
 	/**
 	 * Unregister this actor with the thread management system.
 	 */
-	abstract /* package */ void retire();
+	/* package */ abstract void retire();
 
 	/**
 	 * Notify the thread management system that this actor has received a
 	 * message.
 	 */
-	abstract protected void notifyMessageAvailable();
+	protected abstract void notifyMessageAvailable();
 
 	/**
 	 * @return	true if this agent already has an actor
