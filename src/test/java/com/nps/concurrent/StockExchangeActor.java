@@ -102,7 +102,7 @@ class StockExchangeActor
 		public final void run()
 		{
 			long liveMsgCount = theMessageCount.incrementAndGet();
-			//System.out.println("Creating a message; " + liveMsgCount + " msgs");
+			System.out.println("Creating a message; " + liveMsgCount + " msgs");
 
 			StockExchangeTest.theMaxLiveMsgCount =
 				Math.max(StockExchangeTest.theMaxLiveMsgCount, liveMsgCount);
